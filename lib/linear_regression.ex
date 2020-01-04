@@ -20,26 +20,20 @@ defmodule MatrexNumerix.LinearRegression do
   def fit(
         matrex_data(rows1, columns1, _data1, _x),
         matrex_data(rows2, columns2, _data2, _y)
-      ) when rows1 != rows2 and columns1 != columns2, do: raise %ArgumentError{message: "mismatched sizes"}
+      ) when rows1 != rows2 or columns1 != columns2, do: raise %ArgumentError{message: "mismatched sizes"}
 
   def fit(
-        matrex_data(rows1, columns1, _data1, x),
-        matrex_data(rows2, columns2, _data2, y)
+        matrex_data(rows1, columns1, _data1, _) = x,
+        matrex_data(rows2, columns2, _data2, _) = y
       ) when rows1 == rows2 and columns1 == columns2 do
 
     x_mean = mean(x)
-    y_mean = mean(y.items)
+    y_mean = mean(y)
     variance = variance(x)
-    covariance = covariance(x, y.items)
+    covariance = covariance(x, y)
     slope = covariance / variance
     intercept = y_mean - slope * x_mean
     {intercept, slope}
-  end
-
-  def fit(xs, ys) do
-    x = Matrex.new(xs)
-    y = Matrex.new(ys)
-    fit(x, y)
   end
 
   @doc """

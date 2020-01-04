@@ -14,10 +14,10 @@ defmodule MatrexNumerix.Statistics do
     Matrex.sum(x) / Enum.count(x)
   end
 
-  def mean(xs) do
-    x = Matrex.new(xs)
-    mean(x)
-  end
+  # def mean(xs) do
+  #   x = Matrex.from_list(xs)
+  #   mean(x)
+  # end
 
   @doc """
   The middle value in a list of numbers.
@@ -301,7 +301,7 @@ defmodule MatrexNumerix.Statistics do
   defp do_covariance(x, y, divisor) do
     mean_x = mean(x)
     mean_y = mean(y)
-    Matrex.sum((x |> Matrex.subtract mean_x) |> Matrex.dot (y |> Matrex.subtract mean_y)) / divisor
+    Matrex.sum((x |> Matrex.subtract(mean_x)) |> Matrex.dot_nt(y |> Matrex.subtract(mean_y))) / divisor
   end
 
   defp do_quantile([head | _], _h, hf) when hf < 1, do: head
