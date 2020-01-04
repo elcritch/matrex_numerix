@@ -158,10 +158,6 @@ defmodule Matrex.Algorithms.Statistics do
   @spec kurtosis(Matrex.t()) :: Common.maybe_float()
   def kurtosis(x = %Matrex{}), do: moment(x, 4) / :math.pow(population_variance(x), 2) - 3
 
-  def kurtosis(xs) do
-    x = Matrex.new(xs)
-    kurtosis(x)
-  end
 
   @doc """
   The skewness of a frequency-distribution curve.
@@ -171,10 +167,6 @@ defmodule Matrex.Algorithms.Statistics do
   @spec skewness(Matrex.t()) :: Common.maybe_float()
   def skewness(x = %Matrex{}), do: moment(x, 3) / :math.pow(population_variance(x), 1.5)
 
-  def skewness(xs) do
-    x = Matrex.new(xs)
-    skewness(x)
-  end
 
   @doc """
   Calculates the unbiased covariance from two sample vectors.
