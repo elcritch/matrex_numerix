@@ -29,7 +29,7 @@ defmodule Matrex.StatisticsTest do
   test "mode is nil if no value is repeated" do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- numbers do
-      xs |> Enum.uniq() |> Matrex.new() |> Statistics.mode() == nil
+      xs |> Enum.uniq() |> Matrex.from_list() |> Statistics.mode() == nil
     end
   end
 
@@ -210,8 +210,8 @@ defmodule Matrex.StatisticsTest do
 
 
   test "quantile is nil when tau is invalid" do
-    refute Statistics.quantile([1, 2, 3], -0.1)
-    refute Statistics.quantile([1, 2, 3], -1.1)
+    refute Statistics.quantile([1, 2, 3] |> Matrex.from_list(), -0.1)
+    refute Statistics.quantile([1, 2, 3] |> Matrex.from_list(), -1.1)
   end
 
   # property "quantile is between mix and max values" do
