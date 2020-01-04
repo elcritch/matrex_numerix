@@ -31,14 +31,7 @@ defmodule Numerix.Mixfile do
 
   defp deps do
     [
-      {:matrex, "~> 0.6.8"},
-      {:flow, "~> 0.13"},
-      {:credo, "~> 0.9.0-rc8", only: [:dev, :test]},
-      {:dialyxir, "~> 0.5", only: [:dev, :test]},
-      {:excoveralls, "~> 0.8", only: :test},
-      {:excheck, "~> 0.5", only: :test},
-      {:triq, "~> 1.3"},
-      {:stream_data, "~> 0.4", only: :test},
+      {:matrex, "~> 0.6.8", github: "elcritch/matrex", branch: "add-numerix-ports"},
       {:ex_doc, "~> 0.18", only: :dev},
       {:earmark, "~> 1.2", only: :dev}
     ]

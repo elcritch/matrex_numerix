@@ -3,21 +3,22 @@ defmodule Numerix.Correlation do
   Statistical correlation functions between two vectors.
   """
 
-  use Numerix.Tensor
-
-  import Numerix.LinearAlgebra
-
-  alias Numerix.{Common, Statistics}
+  import Matrex
+  import Matrex.Guards
+  alias Matrex.Algorithms.Statistics
 
   @doc """
   Calculates the Pearson correlation coefficient between two vectors.
   """
   @spec pearson(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def pearson(%Tensor{items: []}, _), do: nil
-  def pearson(_, %Tensor{items: []}), do: nil
-  def pearson(%Tensor{items: x}, %Tensor{items: y}) when length(x) != length(y), do: nil
 
-  def pearson(x = %Tensor{}, y = %Tensor{}) do
+  def pearson(
+        matrex_data(rows1, columns1, _data1, _first),
+        matrex_data(rows2, columns2, _data2, _second)
+      ) when rows1 != rows2 or columns1 != columns2,
+      do: raise %ArgumentError{message: "incorrect sizes"}
+
+  def pearson(x = %Matrex{}, y = %Matrex{}) do
     sum1 = sum(x)
     sum2 = sum(y)
     sum_of_squares1 = sum(pow(x, 2))
@@ -40,8 +41,8 @@ defmodule Numerix.Correlation do
   end
 
   def pearson(vector1, vector2) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     pearson(x, y)
   end
 
@@ -49,12 +50,6 @@ defmodule Numerix.Correlation do
   Calculates the weighted Pearson correlation coefficient between two vectors.
   """
   @spec pearson(Common.vector(), Common.vector(), Common.vector()) :: Common.maybe_float()
-  def pearson(%Tensor{items: []}, _, _), do: nil
-  def pearson(_, %Tensor{items: []}, _), do: nil
-  def pearson(_, _, %Tensor{items: []}), do: nil
-  def pearson([], _, _), do: nil
-  def pearson(_, [], _), do: nil
-  def pearson(_, _, []), do: nil
 
   def pearson(vector1, vector2, weights) do
     weighted_covariance_xy = Statistics.weighted_covariance(vector1, vector2, weights)

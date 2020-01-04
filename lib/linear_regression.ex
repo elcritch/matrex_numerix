@@ -1,26 +1,32 @@
-defmodule Numerix.LinearRegression do
+defmodule Matrex.Algorithms.LinearRegression do
   @moduledoc """
   Linear regression functions.
+
+  Taken from `Numerix` project at https://github.com/safwank/Numerix under the MIT license.
   """
 
-  use Numerix.Tensor
-
-  import Numerix.Statistics
+  import Matrex.Guards
+  import Matrex.Algorithms.Statistics
 
   alias Numerix.{Common, Correlation}
 
   @doc """
   Least squares best fit for points `{x, y}` to a line `y:x↦a+bx`
   where `x` is the predictor and `y` the response.
-
   Returns a tuple containing the intercept `a` and slope `b`.
   """
   @spec fit(Common.vector(), Common.vector()) :: {float, float}
-  def fit(%Tensor{items: []}, _), do: nil
-  def fit(_, %Tensor{items: []}), do: nil
-  def fit(%Tensor{items: x}, %Tensor{items: y}) when length(x) != length(y), do: nil
 
-  def fit(x = %Tensor{}, y = %Tensor{}) do
+  def fit(
+        matrex_data(rows1, columns1, _data1, _x),
+        matrex_data(rows2, columns2, _data2, _y)
+      ) when rows1 != rows2 and columns1 != columns2, do: raise %ArgumentError{message: "mismatched sizes"}
+
+  def fit(
+        matrex_data(rows1, columns1, _data1, x),
+        matrex_data(rows2, columns2, _data2, y)
+      ) when rows1 == rows2 and columns1 == columns2 do
+
     x_mean = mean(x.items)
     y_mean = mean(y.items)
     variance = variance(x.items)
@@ -31,8 +37,8 @@ defmodule Numerix.LinearRegression do
   end
 
   def fit(xs, ys) do
-    x = Tensor.new(xs)
-    y = Tensor.new(ys)
+    x = Matrex.new(xs)
+    y = Matrex.new(ys)
     fit(x, y)
   end
 
@@ -51,7 +57,6 @@ defmodule Numerix.LinearRegression do
   Measures how close the observed data are to
   the fitted regression line, i.e. how accurate
   the prediction is given the actual data.
-
   Returns a value between 0 and 1 where 0 indicates
   a prediction that is worse than the mean and 1
   indicates a perfect prediction.
