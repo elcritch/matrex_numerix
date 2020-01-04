@@ -290,7 +290,7 @@ defmodule MatrexNumerix.Statistics do
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def weighted_mean(x = %Matrex{}, w = %Matrex{}) do
-    Matrex.sum(x |> Matrex.dot_tn(w)) / Matrex.sum(w)
+    Matrex.sum(x |> Matrex.dot_nt(w)) / Matrex.sum(w)
   end
 
   def powered_deviations(x, n) do
