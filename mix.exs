@@ -1,27 +1,23 @@
 defmodule Numerix.Mixfile do
   use Mix.Project
 
+  @version "0.6.0"
+
   def project do
     [
-      app: :numerix,
-      name: "Numerix",
-      description:
-        "A collection of useful mathematical functions in Elixir with a slant towards statistics, linear algebra and machine learning",
-      version: "0.5.1",
-      elixir: "~> 1.5",
-      source_url: "https://github.com/safwank/Numerix",
+      app: :matrex,
+      version: @version,
+      elixir: "~> 1.7",
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
+      preferred_cli_env: ["bench.matrex": :bench, docs: :docs],
+      description:
+        "Port of Numerix to Matrex.",
+      name: "MatrexNumerix",
+      source_url: "https://github.com/elcritch/matrex_numerix",
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
-        credo: :test,
-        "coveralls.html": :test,
-        commit: :test
-      ],
-      aliases: [
-        commit: ["dialyzer", "credo --strict", "coveralls.html --trace"]
-      ],
-      default_task: "commit"
+      docs: docs()
     ]
   end
 
@@ -29,7 +25,7 @@ defmodule Numerix.Mixfile do
     [applications: [:logger]]
   end
 
-  defp deps do
+  def deps do
     [
       {:matrex, "~> 0.6.8", github: "elcritch/matrex", branch: "add-numerix-ports"},
       {:ex_doc, "~> 0.18", only: :dev},
@@ -37,11 +33,23 @@ defmodule Numerix.Mixfile do
     ]
   end
 
-  defp package do
+  def package do
     [
-      maintainers: ["Safwan Kamarrudin"],
+      maintainers: ["Jaremy Creechley"],
       licenses: ["MIT"],
-      links: %{github: "https://github.com/safwank/Numerix"}
+      links: %{github: "https://github.com/elcritch/matrex_numerix"}
+    ]
+  end
+
+  def docs() do
+    [
+      main: "Matrex",
+      logo: "docs/matrex_logo_dark_rounded.png",
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/matrex",
+      extras: [
+        "README.md"
+      ]
     ]
   end
 end
