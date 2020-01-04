@@ -10,13 +10,13 @@ defmodule MatrexNumerix.LinearAlgebra do
   The sum of the products of two vectors.
   """
   @spec dot(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def dot(x = %Tensor{}, y = %Tensor{}) do
+  def dot(x = %Matrex{}, y = %Matrex{}) do
     sum(x * y)
   end
 
   def dot(vector1, vector2) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     dot(x, y)
   end
 
@@ -42,13 +42,13 @@ defmodule MatrexNumerix.LinearAlgebra do
   @spec norm(integer, Common.maybe_vector()) :: Common.maybe_float()
   def norm(_p, nil), do: nil
 
-  def norm(p, x = %Tensor{}) do
+  def norm(p, x = %Matrex{}) do
     s = sum(pow(abs(x), p))
     Math.nth_root(s, p)
   end
 
   def norm(p, vector) do
-    x = Tensor.new(vector)
+    x = Matrex.new(vector)
     norm(p, x)
   end
 end

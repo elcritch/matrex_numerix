@@ -3,7 +3,7 @@ defmodule MatrexNumerix.Kernel do
   Functions used as kernel methods for classification, regression and clustering.
   """
 
-  use MatrexNumerix.Tensor
+  use MatrexNumerix.Matrex
 
   alias MatrexNumerix.Common
 
@@ -17,15 +17,15 @@ defmodule MatrexNumerix.Kernel do
   @spec rbf(Common.vector(), Common.vector(), integer) :: Common.maybe_float()
   def rbf(x, y, gamma \\ 10)
 
-  def rbf(x = %Tensor{}, y = %Tensor{}, gamma) do
+  def rbf(x = %Matrex{}, y = %Matrex{}, gamma) do
     p = pow(x - y, 2)
     len = sum(p)
     :math.exp(-gamma * len)
   end
 
   def rbf(vector1, vector2, gamma) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     rbf(x, y, gamma)
   end
 end

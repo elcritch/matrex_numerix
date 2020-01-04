@@ -6,15 +6,15 @@ defmodule MatrexNumerix.ActivationsTest do
   import PropertyHelper
   import ListHelper
 
-  alias MatrexNumerix.Tensor
+  alias MatrexNumerix.Matrex
 
   @test_list [0, 0.1, 0.5, 0.9, 1.0]
-  @test_vector Tensor.new(@test_list)
-  @test_matrix Tensor.new([@test_list])
-  @test_3dtensor Tensor.new([[@test_list]])
+  @test_vector Matrex.new(@test_list)
+  @test_matrix Matrex.new([@test_list])
+  @test_3dMatrex Matrex.new([[@test_list]])
 
   describe "softmax/1" do
-    property "is correct for a tensor of two or more dimensions" do
+    property "is correct for a Matrex of two or more dimensions" do
       check all test_case <-
                   StreamData.member_of([
                     %{
@@ -30,7 +30,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output: [
                         [
                           [
@@ -44,7 +44,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: Tensor.new([[@test_list, @test_list]]),
+                      input: Matrex.new([[@test_list, @test_list]]),
                       output: [
                         [
                           [
@@ -71,7 +71,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is between 0 and 1" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         softmax(matrix).items
         |> List.flatten()
@@ -83,10 +83,10 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "sigmoid/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(1), output: 0.7310585786300049},
+                    %{input: Matrex.new(1), output: 0.7310585786300049},
                     %{
                       input: @test_vector,
                       output: [
@@ -110,7 +110,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output: [
                         [
                           [
@@ -130,7 +130,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is between 0 and 1" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         sigmoid(matrix).items
         |> List.flatten()
@@ -142,10 +142,10 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "softplus/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(1), output: 1.3132616875182228},
+                    %{input: Matrex.new(1), output: 1.3132616875182228},
                     %{
                       input: @test_vector,
                       output: [
@@ -169,7 +169,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output: [
                         [
                           [
@@ -189,7 +189,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is greater than or equal to 0" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         softplus(matrix).items
         |> List.flatten()
@@ -201,10 +201,10 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "softsign/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(1.0), output: 0.5},
+                    %{input: Matrex.new(1.0), output: 0.5},
                     %{
                       input: @test_vector,
                       output: [
@@ -228,7 +228,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output: [
                         [
                           [
@@ -248,7 +248,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is between -1 and 1" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         softsign(matrix).items
         |> List.flatten()
@@ -260,13 +260,13 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "relu/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(-42), output: Tensor.new(0)},
+                    %{input: Matrex.new(-42), output: Matrex.new(0)},
                     %{input: @test_vector, output: @test_vector},
                     %{input: @test_matrix, output: @test_matrix},
-                    %{input: @test_3dtensor, output: @test_3dtensor}
+                    %{input: @test_3dMatrex, output: @test_3dMatrex}
                   ]) do
         assert relu(test_case.input) == test_case.output
       end
@@ -274,7 +274,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is greater than or equal to 0" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         relu(matrix).items
         |> List.flatten()
@@ -286,7 +286,7 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "leaky_relu/2" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
                     %{input: 2.0, output: 2.0},
@@ -294,24 +294,24 @@ defmodule MatrexNumerix.ActivationsTest do
                     %{input: [[-2, -1, 0, 1, 2]], output: [[-0.2, -0.1, 0, 1, 2]]},
                     %{input: [[[-2, -1, 0, 1, 2]]], output: [[[-0.2, -0.1, 0, 1, 2]]]}
                   ]) do
-        tensor = Tensor.new(test_case.input)
-        assert leaky_relu(tensor, 0.1).items == test_case.output
+        Matrex = Matrex.new(test_case.input)
+        assert leaky_relu(Matrex, 0.1).items == test_case.output
       end
     end
   end
 
   describe "elu/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(-42.0), output: Tensor.new(-1.0)},
+                    %{input: Matrex.new(-42.0), output: Matrex.new(-1.0)},
                     %{input: @test_vector, output: @test_vector},
                     %{
-                      input: Tensor.new([-1, -2]),
-                      output: Tensor.new([-0.6321205588285577, -0.8646647167633873])
+                      input: Matrex.new([-1, -2]),
+                      output: Matrex.new([-0.6321205588285577, -0.8646647167633873])
                     },
                     %{input: @test_matrix, output: @test_matrix},
-                    %{input: @test_3dtensor, output: @test_3dtensor}
+                    %{input: @test_3dMatrex, output: @test_3dMatrex}
                   ]) do
         assert elu(test_case.input) == test_case.output
       end
@@ -319,14 +319,14 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "selu/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(-42.0), output: Tensor.new(-1.7580993408473766)},
+                    %{input: Matrex.new(-42.0), output: Matrex.new(-1.7580993408473766)},
                     %{
                       input: @test_vector,
                       output:
-                        Tensor.new([
+                        Matrex.new([
                           0.0,
                           0.10507009873554805,
                           0.5253504936777402,
@@ -335,13 +335,13 @@ defmodule MatrexNumerix.ActivationsTest do
                         ])
                     },
                     %{
-                      input: Tensor.new([-1, -2]),
-                      output: Tensor.new([-1.1113307378125625, -1.520166468595695])
+                      input: Matrex.new([-1, -2]),
+                      output: Matrex.new([-1.1113307378125625, -1.520166468595695])
                     },
                     %{
                       input: @test_matrix,
                       output:
-                        Tensor.new([
+                        Matrex.new([
                           [
                             0.0,
                             0.10507009873554805,
@@ -352,9 +352,9 @@ defmodule MatrexNumerix.ActivationsTest do
                         ])
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output:
-                        Tensor.new([
+                        Matrex.new([
                           [
                             [
                               0.0,
@@ -373,10 +373,10 @@ defmodule MatrexNumerix.ActivationsTest do
   end
 
   describe "tanh/1" do
-    property "is correct for a tensor of any dimension" do
+    property "is correct for a Matrex of any dimension" do
       check all test_case <-
                   StreamData.member_of([
-                    %{input: Tensor.new(1), output: 0.76159415595576485},
+                    %{input: Matrex.new(1), output: 0.76159415595576485},
                     %{
                       input: @test_vector,
                       output: [
@@ -400,7 +400,7 @@ defmodule MatrexNumerix.ActivationsTest do
                       ]
                     },
                     %{
-                      input: @test_3dtensor,
+                      input: @test_3dMatrex,
                       output: [
                         [
                           [
@@ -420,7 +420,7 @@ defmodule MatrexNumerix.ActivationsTest do
 
     property "is between -1 and 1" do
       check all values <- matrix_of(StreamData.float(), 5) do
-        matrix = Tensor.new(values)
+        matrix = Matrex.new(values)
 
         tanh(matrix).items
         |> List.flatten()

@@ -15,14 +15,14 @@ defmodule MatrexNumerix.Distance do
   and actual values.
   """
   @spec mse(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def mse(x = %Tensor{}, y = %Tensor{}) do
+  def mse(x = %Matrex{}, y = %Matrex{}) do
     p = pow(x - y, 2)
     Statistics.mean(p.items)
   end
 
   def mse(vector1, vector2) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     mse(x, y)
   end
 
@@ -54,13 +54,13 @@ defmodule MatrexNumerix.Distance do
   @spec minkowski(Common.vector(), Common.vector(), integer) :: Common.maybe_float()
   def minkowski(x, y, p \\ 3)
 
-  def minkowski(x = %Tensor{}, y = %Tensor{}, p) do
+  def minkowski(x = %Matrex{}, y = %Matrex{}, p) do
     norm(p, x - y)
   end
 
   def minkowski(vector1, vector2, p) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     minkowski(x, y, p)
   end
 
@@ -68,13 +68,13 @@ defmodule MatrexNumerix.Distance do
   The Euclidean distance between two vectors.
   """
   @spec euclidean(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def euclidean(x = %Tensor{}, y = %Tensor{}) do
+  def euclidean(x = %Matrex{}, y = %Matrex{}) do
     l2_norm(x - y)
   end
 
   def euclidean(vector1, vector2) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     euclidean(x, y)
   end
 
@@ -82,13 +82,13 @@ defmodule MatrexNumerix.Distance do
   The Manhattan distance between two vectors.
   """
   @spec manhattan(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def manhattan(x = %Tensor{}, y = %Tensor{}) do
+  def manhattan(x = %Matrex{}, y = %Matrex{}) do
     l1_norm(x - y)
   end
 
   def manhattan(vector1, vector2) do
-    x = Tensor.new(vector1)
-    y = Tensor.new(vector2)
+    x = Matrex.new(vector1)
+    y = Matrex.new(vector2)
     manhattan(x, y)
   end
 
@@ -96,9 +96,9 @@ defmodule MatrexNumerix.Distance do
   The Jaccard distance (1 - Jaccard index) between two vectors.
   """
   @spec jaccard(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def jaccard(%Tensor{items: []}, %Tensor{items: []}), do: 0.0
-  def jaccard(%Tensor{items: []}, _), do: nil
-  def jaccard(_, %Tensor{items: []}), do: nil
+  def jaccard(%Matrex{items: []}, %Matrex{items: []}), do: 0.0
+  def jaccard(%Matrex{items: []}, _), do: nil
+  def jaccard(_, %Matrex{items: []}), do: nil
   def jaccard([], []), do: 0.0
   def jaccard([], _), do: nil
   def jaccard(_, []), do: nil

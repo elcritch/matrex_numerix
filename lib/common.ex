@@ -3,8 +3,6 @@ defmodule MatrexNumerix.Common do
   Common typespecs and functions.
   """
 
-  alias MatrexNumerix.Tensor
-
   @typedoc """
   A type representing an unreal number.
   """
@@ -21,9 +19,9 @@ defmodule MatrexNumerix.Common do
   @type maybe_float :: float | nil
 
   @typedoc """
-  A type representing a vector (1D tensor) of numbers.
+  A type representing a vector (1D Matrex) of numbers.
   """
-  @type vector :: [number] | %Tensor{dims: 1}
+  @type vector :: [number] | %Matrex{}
 
   @typedoc """
   Something that may be a vector.
