@@ -2,13 +2,13 @@ defmodule Matrex.Algorithms.LinearRegression do
   @moduledoc """
   Linear regression functions.
 
-  Taken from `Numerix` project at https://github.com/safwank/Numerix under the MIT license.
+  Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
   import Matrex.Guards
   import Matrex.Algorithms.Statistics
 
-  alias Numerix.{Common, Correlation}
+  alias MatrexNumerix.{Common, Correlation}
 
   @doc """
   Least squares best fit for points `{x, y}` to a line `y:x↦a+bx`

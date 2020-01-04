@@ -1,9 +1,9 @@
-defmodule Numerix.LinearRegressionTest do
+defmodule MatrexNumerix.LinearRegressionTest do
   use ExUnit.Case, async: true
   use ExCheck
 
   import ListHelper
-  import Numerix.LinearRegression
+  import MatrexNumerix.LinearRegression
 
   test "least square fit is nil when any vector is empty" do
     refute fit([], [1, 2, 3])

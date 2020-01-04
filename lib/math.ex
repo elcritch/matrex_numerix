@@ -1,4 +1,4 @@
-defmodule Numerix.Math do
+defmodule MatrexNumerix.Math do
   @moduledoc """
   Common mathematical functions.
   """

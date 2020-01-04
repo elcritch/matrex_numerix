@@ -1,9 +1,9 @@
-defmodule Numerix.DistanceTest do
+defmodule MatrexNumerix.DistanceTest do
   use ExUnit.Case, async: true
   use ExCheck
   import ListHelper
 
-  alias Numerix.{Distance, Correlation}
+  alias MatrexNumerix.{Distance, Correlation}
 
   test "MSE is correct for a specific example" do
     vector1 = [12, 15, 20, 22, 24]

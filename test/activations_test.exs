@@ -1,12 +1,12 @@
-defmodule Numerix.ActivationsTest do
+defmodule MatrexNumerix.ActivationsTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  import Numerix.Activations
+  import MatrexNumerix.Activations
   import PropertyHelper
   import ListHelper
 
-  alias Numerix.Tensor
+  alias MatrexNumerix.Tensor
 
   @test_list [0, 0.1, 0.5, 0.9, 1.0]
   @test_vector Tensor.new(@test_list)

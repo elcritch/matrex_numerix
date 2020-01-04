@@ -1,10 +1,10 @@
-defmodule Numerix.SpecialTest do
+defmodule MatrexNumerix.SpecialTest do
   use ExUnit.Case, async: true
   use ExCheck
 
   import ListHelper
 
-  alias Numerix.Special
+  alias MatrexNumerix.Special
 
   test "logit is nil when p is invalid" do
     refute Special.logit(-0.1)

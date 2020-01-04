@@ -1,8 +1,8 @@
-defmodule MatrexNumerixTest do
+defmodule MatrexMatrexNumerixTest do
   use ExUnit.Case
-  doctest MatrexNumerix
+  doctest MatrexMatrexNumerix
 
   test "greets the world" do
-    assert MatrexNumerix.hello() == :world
+    assert MatrexMatrexNumerix.hello() == :world
   end
 end

@@ -1,4 +1,4 @@
-defmodule Numerix.Correlation do
+defmodule MatrexNumerix.Correlation do
   @moduledoc """
   Statistical correlation functions between two vectors.
   """

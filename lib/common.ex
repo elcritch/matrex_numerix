@@ -1,9 +1,9 @@
-defmodule Numerix.Common do
+defmodule MatrexNumerix.Common do
   @moduledoc """
   Common typespecs and functions.
   """
 
-  alias Numerix.Tensor
+  alias MatrexNumerix.Tensor
 
   @typedoc """
   A type representing an unreal number.

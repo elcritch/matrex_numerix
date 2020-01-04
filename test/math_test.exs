@@ -1,7 +1,7 @@
-defmodule Numerix.MathTest do
+defmodule MatrexNumerix.MathTest do
   use ExUnit.Case, async: true
   use ExCheck
-  alias Numerix.Math
+  alias MatrexNumerix.Math
 
   property "nth root is the reverse of power" do
     for_all {x, n} in such_that({xx, nn} in {int(), int()} when xx > 0 && nn > 0) do

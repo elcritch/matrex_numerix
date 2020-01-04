@@ -1,11 +1,11 @@
-defmodule Numerix.Kernel do
+defmodule MatrexNumerix.Kernel do
   @moduledoc """
   Functions used as kernel methods for classification, regression and clustering.
   """
 
-  use Numerix.Tensor
+  use MatrexNumerix.Tensor
 
-  alias Numerix.Common
+  alias MatrexNumerix.Common
 
   @doc """
   Radial basis function used to approximate given functions.

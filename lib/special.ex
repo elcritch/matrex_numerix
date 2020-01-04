@@ -1,9 +1,9 @@
-defmodule Numerix.Special do
+defmodule MatrexNumerix.Special do
   @moduledoc """
   Special mathematical functions that would make Euler proud.
   """
 
-  alias Numerix.Common
+  alias MatrexNumerix.Common
 
   @doc """
   Calculates the logit function (the inverse of the sigmoidal

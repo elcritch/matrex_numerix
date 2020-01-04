@@ -1,7 +1,7 @@
-defmodule Numerix.LinearAlgebraTest do
+defmodule MatrexNumerix.LinearAlgebraTest do
   use ExUnit.Case, async: true
 
-  import Numerix.LinearAlgebra
+  import MatrexNumerix.LinearAlgebra
 
   test "dot product is correct for a specific example" do
     assert dot([1, 2, 3], [4, 5, 6]) == 32

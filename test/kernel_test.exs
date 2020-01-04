@@ -1,9 +1,9 @@
-defmodule Numerix.KernelTest do
+defmodule MatrexNumerix.KernelTest do
   use ExUnit.Case, async: true
   use ExCheck
   import ListHelper
 
-  alias Numerix.Kernel
+  alias MatrexNumerix.Kernel
 
   property "rbf is between 0 and 1" do
     for_all {xs, ys} in such_that({xxs, yys} in {non_empty(list(number())), non_empty(list(number()))}

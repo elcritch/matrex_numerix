@@ -1,9 +1,9 @@
-defmodule Numerix.CorrelationTest do
+defmodule MatrexNumerix.CorrelationTest do
   use ExUnit.Case, async: true
   use ExCheck
   import ListHelper
 
-  alias Numerix.Correlation
+  alias MatrexNumerix.Correlation
 
   test "pearson is nil when any vector is empty" do
     refute Correlation.pearson([], [1])

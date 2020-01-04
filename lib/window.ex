@@ -1,4 +1,4 @@
-defmodule Numerix.Window do
+defmodule MatrexNumerix.Window do
   @moduledoc """
   Functions used to smoothly bring a sampled signal down
   to zero at the edges of the sampled region.

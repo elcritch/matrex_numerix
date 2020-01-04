@@ -1,9 +1,9 @@
-defmodule Numerix.Activations do
+defmodule MatrexNumerix.Activations do
   @moduledoc """
   Activation functions for neural networks.
   """
 
-  use Numerix.Tensor
+  use MatrexNumerix.Tensor
 
   @doc """
   Computes the softmax of a tensor.

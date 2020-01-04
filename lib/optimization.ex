@@ -1,4 +1,4 @@
-defmodule Numerix.Optimization do
+defmodule MatrexNumerix.Optimization do
   @moduledoc """
   Optimization algorithms to select the best element from a set of possible solutions.
   """
@@ -14,7 +14,7 @@ defmodule Numerix.Optimization do
 
       iex> domain = [0..9] |> Stream.cycle |> Enum.take(10)
       iex> cost_fun = fn(x) -> Enum.sum(x) end
-      iex> Numerix.Optimize.genetic(domain, cost_fun)
+      iex> MatrexNumerix.Optimize.genetic(domain, cost_fun)
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
   ## Options

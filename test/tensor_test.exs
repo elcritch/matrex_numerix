@@ -1,6 +1,6 @@
-defmodule Numerix.TensorTest do
+defmodule MatrexNumerix.TensorTest do
   use ExUnit.Case, async: true
-  use Numerix.Tensor
+  use MatrexNumerix.Tensor
 
   @test_list [0, 0.1, 0.5, 0.9, 1.0]
 

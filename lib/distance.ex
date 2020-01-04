@@ -1,13 +1,13 @@
-defmodule Numerix.Distance do
+defmodule MatrexNumerix.Distance do
   @moduledoc """
   Distance functions between two vectors.
   """
 
   import Matrex
 
-  import Numerix.LinearAlgebra
+  import MatrexNumerix.LinearAlgebra
 
-  alias Numerix.{Common, Correlation, Statistics}
+  alias MatrexNumerix.{Common, Correlation, Statistics}
 
   @doc """
   Mean squared error, the average of the squares of the errors

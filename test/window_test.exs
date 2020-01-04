@@ -1,10 +1,10 @@
-defmodule Numerix.WindowTest do
+defmodule MatrexNumerix.WindowTest do
   use ExUnit.Case, async: true
   use ExCheck
 
   import ListHelper
 
-  alias Numerix.Window
+  alias MatrexNumerix.Window
 
   test "gaussian is correct for specific examples" do
     [

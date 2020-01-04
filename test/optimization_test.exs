@@ -1,8 +1,8 @@
-defmodule Numerix.OptimizationTest do
+defmodule MatrexNumerix.OptimizationTest do
   use ExUnit.Case, async: true
   use ExCheck
 
-  import Numerix.Optimization
+  import MatrexNumerix.Optimization
 
   @tag iterations: 10
   property "genetic optimization returns the solution with the lowest cost" do

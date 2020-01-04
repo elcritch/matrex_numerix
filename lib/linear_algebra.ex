@@ -1,4 +1,4 @@
-defmodule Numerix.LinearAlgebra do
+defmodule MatrexNumerix.LinearAlgebra do
   @moduledoc """
   Linear algebra functions used for vector operations,
   matrix factorization and matrix transformation.

@@ -1,6 +1,6 @@
-defmodule MatrexNumerix do
+defmodule MatrexMatrexNumerix do
   @moduledoc """
-  Documentation for MatrexNumerix.
+  Documentation for MatrexMatrexNumerix.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule MatrexNumerix do
 
   ## Examples
 
-      iex> MatrexNumerix.hello()
+      iex> MatrexMatrexNumerix.hello()
       :world
 
   """
