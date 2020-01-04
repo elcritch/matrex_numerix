@@ -7,20 +7,6 @@ defmodule MatrexNumerix.LinearAlgebra do
   import Matrex
 
   @doc """
-  The sum of the products of two vectors.
-  """
-  @spec dot(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def dot(x = %Matrex{}, y = %Matrex{}) do
-    sum(x * y)
-  end
-
-  def dot(vector1, vector2) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    dot(x, y)
-  end
-
-  @doc """
   The L1 norm of a vector, also known as Manhattan norm.
   """
   @spec l1_norm(Common.maybe_vector()) :: Common.maybe_float()

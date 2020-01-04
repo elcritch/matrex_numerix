@@ -3,7 +3,7 @@ defmodule MatrexNumerix.Kernel do
   Functions used as kernel methods for classification, regression and clustering.
   """
 
-  use MatrexNumerix.Matrex
+  import Matrex
 
   alias MatrexNumerix.Common
 

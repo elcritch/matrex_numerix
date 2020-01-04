@@ -96,12 +96,12 @@ defmodule MatrexNumerix.Distance do
   The Jaccard distance (1 - Jaccard index) between two vectors.
   """
   @spec jaccard(Common.vector(), Common.vector()) :: Common.maybe_float()
-  def jaccard(%Matrex{items: []}, %Matrex{items: []}), do: 0.0
-  def jaccard(%Matrex{items: []}, _), do: nil
-  def jaccard(_, %Matrex{items: []}), do: nil
-  def jaccard([], []), do: 0.0
-  def jaccard([], _), do: nil
-  def jaccard(_, []), do: nil
+  # def jaccard(%Matrex{items: []}, %Matrex{items: []}), do: 0.0
+  # def jaccard(%Matrex{items: []}, _), do: nil
+  # def jaccard(_, %Matrex{items: []}), do: nil
+  # def jaccard([], []), do: 0.0
+  # def jaccard([], _), do: nil
+  # def jaccard(_, []), do: nil
 
   def jaccard(vector1, vector2) do
     vector1
