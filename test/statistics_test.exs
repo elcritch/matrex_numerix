@@ -39,7 +39,7 @@ defmodule Matrex.StatisticsTest do
     # for {x, xs} in {number(), non_empty(list(number()))} do
     for {x, xs} <- numbers do
       frequent = [x]
-      frequent_list = frequent |> Stream.cycle() |> Enum.take(length(xs) + 1)
+      frequent_list = frequent |> Stream.cycle() |> Enum.take(Enum.count(xs) + 1)
       xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Statistics.mode() == frequent
     end
   end
@@ -115,7 +115,7 @@ defmodule Matrex.StatisticsTest do
   end
 
   test "moment for a normal list (for coverage)" do
-    assert Statistics.moment([1, 2, 3], 10) == 0.6666666666666666
+    assert Statistics.moment([1, 2, 3] |> Matrex.from_list(), 10) == 0.6666666666666666
   end
 
 
@@ -142,7 +142,7 @@ defmodule Matrex.StatisticsTest do
     dataset2 = DataHelper.read("Lottery")
 
     assert_in_delta(
-      dataset1[:data] |> Enum.to_list() |> Statistics.skewness(),
+      dataset1[:data] |> Enum.to_list() |> Matrex.from_list() |> Statistics.skewness(),
       -0.050606638756334,
       0.001
     )
@@ -156,8 +156,8 @@ defmodule Matrex.StatisticsTest do
 
 
   test "covariance is nil when any list has only one element" do
-    refute Statistics.covariance([1], [2, 3])
-    refute Statistics.covariance([1, 2], [3])
+    refute Statistics.covariance([1] |> Matrex.from_list(), [2, 3] |> Matrex.from_list())
+    refute Statistics.covariance([1, 2] |> Matrex.from_list(), [3] |> Matrex.from_list())
   end
 
   test "covariance is nil when the list lengths do not match" do
@@ -224,7 +224,7 @@ defmodule Matrex.StatisticsTest do
   # end
 
   test "quantile is correct for specific examples" do
-    xs = [-1, 5, 0, -3, 10, -0.5, 4, 0.2, 1, 6]
+    xs = [-1, 5, 0, -3, 10, -0.5, 4, 0.2, 1, 6] |> Matrex.from_list()
 
     [
       {0, -3},
