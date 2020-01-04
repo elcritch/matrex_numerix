@@ -27,10 +27,10 @@ defmodule MatrexNumerix.LinearRegression do
         matrex_data(rows2, columns2, _data2, y)
       ) when rows1 == rows2 and columns1 == columns2 do
 
-    x_mean = mean(x.items)
+    x_mean = mean(x)
     y_mean = mean(y.items)
-    variance = variance(x.items)
-    covariance = covariance(x.items, y.items)
+    variance = variance(x)
+    covariance = covariance(x, y.items)
     slope = covariance / variance
     intercept = y_mean - slope * x_mean
     {intercept, slope}
