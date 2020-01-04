@@ -3,7 +3,7 @@ defmodule MatrexNumerix.StatisticsTest do
   # use ExCheck
   import ListHelper
 
-  alias MatrexNumerix.Algorithms.Statistics
+  alias MatrexNumerix.Statistics
 
   test "median is the middle value of a sorted list" do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1), ]
@@ -107,14 +107,14 @@ defmodule MatrexNumerix.StatisticsTest do
 
     xx =
       dataset1[:data]
-      |> IO.inspect(label: :std_dev_data)
+      # |> IO.inspect(label: :std_dev_data)
       |> Enum.to_list()
       |> Matrex.from_list()
-      |> IO.inspect(label: :std_dev_data_1)
+      # |> IO.inspect(label: :std_dev_data_1)
       |> Statistics.std_dev()
 
     assert_in_delta(
-      xx |> IO.inspect(label: :std_dev),
+      xx,
       dataset1[:std_dev],
       0.0001
     )
@@ -136,13 +136,13 @@ defmodule MatrexNumerix.StatisticsTest do
     dataset2 = DataHelper.read("Lottery")
 
     assert_in_delta(
-      dataset1[:data] |> Matrex.from_list() |> Statistics.kurtosis(),
+      dataset1[:data] |> Enum.to_list() |> Matrex.from_list() |> Statistics.kurtosis(),
       -1.49604979214447,
       0.01
     )
 
     assert_in_delta(
-      dataset2[:data] |> Enum.to_list() |> Statistics.kurtosis(),
+      dataset2[:data] |> Enum.to_list() |> Matrex.from_list() |> Statistics.kurtosis(),
       -1.19256091074856,
       0.01
     )
@@ -160,21 +160,17 @@ defmodule MatrexNumerix.StatisticsTest do
     )
 
     assert_in_delta(
-      dataset2[:data] |> Enum.to_list() |> Statistics.skewness(),
+      dataset2[:data] |> Enum.to_list() |> Matrex.from_list() |> Statistics.skewness(),
       -0.09333165310779,
       0.001
     )
   end
 
 
-  test "covariance is nil when any list has only one element" do
-    refute Statistics.covariance([1] |> Matrex.from_list(), [2, 3] |> Matrex.from_list())
-    refute Statistics.covariance([1, 2] |> Matrex.from_list(), [3] |> Matrex.from_list())
-  end
-
   test "covariance is nil when the list lengths do not match" do
-    refute Statistics.covariance([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
-    refute Statistics.covariance([1, 2, 3] |> Matrex.from_list(), [4, 5] |> Matrex.from_list())
+    assert_raise ArgumentError, fn ->
+     Statistics.covariance([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
+    end
   end
 
   # property "covariance is consistent with variance" do
@@ -195,8 +191,9 @@ defmodule MatrexNumerix.StatisticsTest do
   # end
 
   test "population covariance is nil when the list lengths do not match" do
-    refute Statistics.population_covariance([1, 2], [3, 4, 5])
-    refute Statistics.population_covariance([1, 2, 3], [4, 5])
+    assert_raise ArgumentError, fn ->
+      Statistics.population_covariance([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
+    end
   end
 
   # property "population covariance is consistent with population variance" do
@@ -278,8 +275,9 @@ defmodule MatrexNumerix.StatisticsTest do
 
 
   test "weighted mean is nil when the list lengths do not match" do
-    refute Statistics.weighted_mean([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
-    refute Statistics.weighted_mean([1, 2, 3] |> Matrex.from_list(), [4, 5] |> Matrex.from_list())
+    assert_raise ArgumentError, fn ->
+      Statistics.weighted_mean([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
+    end
   end
 
   # property "weighted mean is consistent with arithmetic mean" do

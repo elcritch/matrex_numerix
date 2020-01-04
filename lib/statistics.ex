@@ -122,7 +122,7 @@ defmodule MatrexNumerix.Statistics do
   def std_dev(x = %Matrex{}), do: :math.sqrt(variance(x))
 
   def std_dev(xs) do
-    x = Matrex.new(xs)
+    x = Matrex.from_list(xs)
     std_dev(x)
   end
 
@@ -175,12 +175,14 @@ defmodule MatrexNumerix.Statistics do
   """
   @spec covariance(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def covariance(
-        matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 and columns1 <= 1,
+        matrex_data(rows1, columns1, _data1, _first),
+        matrex_data(rows2, columns2, _data2, _second)
+      ) when rows1 <= 1 and columns1 <= 1 or rows2 <= 1 and columns2 <= 1,
       do: raise %ArgumentError{message: "incorrect sizes"}
   def covariance(
-        matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 != columns1,
+        matrex_data(rows1, columns1, _data1, _first),
+        matrex_data(rows2, columns2, _data2, _second)
+      ) when rows1 != rows2 or columns1 != columns2,
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def covariance(x = %Matrex{}, y = %Matrex{}) do
@@ -282,16 +284,13 @@ defmodule MatrexNumerix.Statistics do
   """
   @spec weighted_mean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def weighted_mean(
-        matrex_data(rows1, _columns1, _data1, _first),
-        matrex_data(rows2, _columns2, _data2, _second)
-      ) when rows1 != rows2,
+        matrex_data(rows1, columns1, _data1, _first),
+        matrex_data(rows2, columns2, _data2, _second)
+      ) when rows1 != rows2 or columns1 != columns2,
       do: raise %ArgumentError{message: "incorrect sizes"}
-  def weighted_mean(x = %Matrex{}, w = %Matrex{}), do: Matrex.sum(x |> Matrex.dot_tn w) / Matrex.sum(w)
 
-  def weighted_mean(xs, weights) do
-    x = Matrex.new(xs)
-    w = Matrex.new(weights)
-    weighted_mean(x, w)
+  def weighted_mean(x = %Matrex{}, w = %Matrex{}) do
+    Matrex.sum(x |> Matrex.dot_tn(w)) / Matrex.sum(w)
   end
 
   def powered_deviations(x, n) do
@@ -302,7 +301,7 @@ defmodule MatrexNumerix.Statistics do
   defp do_covariance(x, y, divisor) do
     mean_x = mean(x)
     mean_y = mean(y)
-    Matrex.sum((x - mean_x) * (y - mean_y)) / divisor
+    Matrex.sum((x |> Matrex.subtract mean_x) |> Matrex.dot (y |> Matrex.subtract mean_y)) / divisor
   end
 
   defp do_quantile([head | _], _h, hf) when hf < 1, do: head
