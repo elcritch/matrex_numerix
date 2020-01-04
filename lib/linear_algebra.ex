@@ -4,7 +4,7 @@ defmodule Numerix.LinearAlgebra do
   matrix factorization and matrix transformation.
   """
 
-  use Matrex
+  import Matrex
 
   @doc """
   The sum of the products of two vectors.

@@ -3,7 +3,7 @@ defmodule Numerix.Distance do
   Distance functions between two vectors.
   """
 
-  use Matrex
+  import Matrex
 
   import Numerix.LinearAlgebra
 
