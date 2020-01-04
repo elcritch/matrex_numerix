@@ -1,28 +1,54 @@
-defmodule MatrexNumerix.MixProject do
+defmodule Numerix.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :matrex_numerix,
-      version: "0.1.0",
-      elixir: "~> 1.9",
-      start_permanent: Mix.env() == :prod,
-      deps: deps()
+      app: :numerix,
+      name: "Numerix",
+      description:
+        "A collection of useful mathematical functions in Elixir with a slant towards statistics, linear algebra and machine learning",
+      version: "0.5.1",
+      elixir: "~> 1.5",
+      source_url: "https://github.com/safwank/Numerix",
+      deps: deps(),
+      package: package(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        credo: :test,
+        "coveralls.html": :test,
+        commit: :test
+      ],
+      aliases: [
+        commit: ["dialyzer", "credo --strict", "coveralls.html --trace"]
+      ],
+      default_task: "commit"
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    [applications: [:logger]]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:matrex, "~> 0.6.8"},
+      {:flow, "~> 0.13"},
+      {:credo, "~> 0.9.0-rc8", only: [:dev, :test]},
+      {:dialyxir, "~> 0.5", only: [:dev, :test]},
+      {:excoveralls, "~> 0.8", only: :test},
+      {:excheck, "~> 0.5", only: :test},
+      {:triq, "~> 1.3"},
+      {:stream_data, "~> 0.4", only: :test},
+      {:ex_doc, "~> 0.18", only: :dev},
+      {:earmark, "~> 1.2", only: :dev}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Safwan Kamarrudin"],
+      licenses: ["MIT"],
+      links: %{github: "https://github.com/safwank/Numerix"}
     ]
   end
 end
