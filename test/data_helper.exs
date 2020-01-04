@@ -4,6 +4,10 @@ defmodule DataHelper do
     %{std_dev: parse_std_dev(lines), data: parse_data(lines)}
   end
 
+  def read_mtx(dataset) do
+    "test/resources/data/#{dataset}.mtx" |> Matrex.load()
+  end
+
   defp parse_std_dev(lines) do
     lines
     |> Stream.filter(fn line -> String.contains?(line, "Sample Standard Deviation") end)

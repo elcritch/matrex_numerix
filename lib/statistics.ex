@@ -1,4 +1,4 @@
-defmodule Matrex.Algorithms.Statistics do
+defmodule MatrexNumerix.Statistics do
   @moduledoc """
   Common statistical functions.
   """
@@ -11,7 +11,7 @@ defmodule Matrex.Algorithms.Statistics do
   @spec mean(Matrex.t()) :: Common.maybe_float()
 
   def mean(x = %Matrex{}) do
-    Matrex.sum(x) / Enum.count(x.items)
+    Matrex.sum(x) / Enum.count(x)
   end
 
   def mean(xs) do
@@ -25,8 +25,8 @@ defmodule Matrex.Algorithms.Statistics do
   @spec median(Matrex.t()) :: Common.maybe_float()
 
   def median(x = %Matrex{}) do
-    middle_index = round(length(x) / 2) - 1
-    x.items |> Enum.sort() |> Enum.at(middle_index)
+    middle_index = round(Enum.count(x) / 2) - 1
+    x |> Enum.sort() |> Enum.at(middle_index)
   end
 
   def median(xs) do
@@ -41,7 +41,7 @@ defmodule Matrex.Algorithms.Statistics do
 
   def mode(x = %Matrex{}) do
     counts =
-      Enum.reduce(x.items, %{}, fn i, acc ->
+      Enum.reduce(x, %{}, fn i, acc ->
         acc |> Map.update(i, 1, fn count -> count + 1 end)
       end)
 
@@ -69,7 +69,7 @@ defmodule Matrex.Algorithms.Statistics do
   @spec range(Matrex.t()) :: Common.maybe_float()
 
   def range(x = %Matrex{}) do
-    {minimum, maximum} = Enum.min_max(x.items)
+    {minimum, maximum} = Enum.min_max(x)
     maximum - minimum
   end
 
@@ -85,11 +85,11 @@ defmodule Matrex.Algorithms.Statistics do
   @spec variance(Matrex.t()) :: Common.maybe_float()
   def variance(
         matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 or columns1 <= 1,
+      ) when rows1 <= 1 and columns1 <= 1,
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def variance(x = %Matrex{}) do
-    powered_deviations(x, 2) / (Enum.count(x.items) - 1)
+    powered_deviations(x, 2) / (Enum.count(x) - 1)
   end
 
   def variance(xs) do
@@ -116,8 +116,9 @@ defmodule Matrex.Algorithms.Statistics do
   @spec std_dev(Matrex.t()) :: Common.maybe_float()
   def std_dev(
         matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 or columns1 <= 1,
+      ) when rows1 <= 1 and columns1 <= 1,
       do: raise %ArgumentError{message: "incorrect sizes"}
+
   def std_dev(x = %Matrex{}), do: :math.sqrt(variance(x))
 
   def std_dev(xs) do
@@ -143,7 +144,7 @@ defmodule Matrex.Algorithms.Statistics do
   """
   @spec moment(Matrex.t(), pos_integer) :: Common.maybe_float()
   def moment(_, 1), do: 0.0
-  def moment(x = %Matrex{}, n), do: powered_deviations(x, n) / Enum.count(x.items)
+  def moment(x = %Matrex{}, n), do: powered_deviations(x, n) / Enum.count(x)
 
   def moment(xs, n) do
     x = Matrex.new(xs)
@@ -175,7 +176,7 @@ defmodule Matrex.Algorithms.Statistics do
   @spec covariance(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def covariance(
         matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 or columns1 <= 1,
+      ) when rows1 <= 1 and columns1 <= 1,
       do: raise %ArgumentError{message: "incorrect sizes"}
   def covariance(
         matrex_data(rows1, columns1, _data1, _first)
@@ -183,7 +184,7 @@ defmodule Matrex.Algorithms.Statistics do
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def covariance(x = %Matrex{}, y = %Matrex{}) do
-    divisor = Enum.count(x.items) - 1
+    divisor = Enum.count(x) - 1
     do_covariance(x, y, divisor)
   end
 
@@ -206,7 +207,7 @@ defmodule Matrex.Algorithms.Statistics do
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def population_covariance(x = %Matrex{}, y = %Matrex{}) do
-    divisor = Enum.count(x.items)
+    divisor = Enum.count(x)
     do_covariance(x, y, divisor)
   end
 
@@ -225,7 +226,7 @@ defmodule Matrex.Algorithms.Statistics do
   def quantile(_xs, tau) when tau < 0 or tau > 1, do: nil
 
   def quantile(x = %Matrex{}, tau) do
-    sorted_x = Enum.sort(x.items)
+    sorted_x = Enum.sort(x)
     h = (length(sorted_x) + 1 / 3) * tau + 1 / 3
     hf = h |> Float.floor() |> round
     do_quantile(sorted_x, h, hf)
@@ -285,7 +286,7 @@ defmodule Matrex.Algorithms.Statistics do
         matrex_data(rows2, _columns2, _data2, _second)
       ) when rows1 != rows2,
       do: raise %ArgumentError{message: "incorrect sizes"}
-  def weighted_mean(x = %Matrex{}, w = %Matrex{}), do: Matrex.sum(x * w) / Matrex.sum(w)
+  def weighted_mean(x = %Matrex{}, w = %Matrex{}), do: Matrex.sum(x |> Matrex.dot_tn w) / Matrex.sum(w)
 
   def weighted_mean(xs, weights) do
     x = Matrex.new(xs)
@@ -293,9 +294,9 @@ defmodule Matrex.Algorithms.Statistics do
     weighted_mean(x, w)
   end
 
-  defp powered_deviations(x, n) do
+  def powered_deviations(x, n) do
     x_mean = mean(x)
-    Matrex.sum(Matrex.pow(x - x_mean, n))
+    Matrex.sum(Matrex.pow(x |> Matrex.subtract(x_mean), n))
   end
 
   defp do_covariance(x, y, divisor) do

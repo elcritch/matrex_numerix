@@ -1,10 +1,9 @@
-defmodule Matrex.StatisticsTest do
+defmodule MatrexNumerix.StatisticsTest do
   use ExUnit.Case, async: false
   # use ExCheck
   import ListHelper
 
-  alias Matrex.Algorithms.Statistics
-
+  alias MatrexNumerix.Algorithms.Statistics
 
   test "median is the middle value of a sorted list" do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1), ]
@@ -13,7 +12,7 @@ defmodule Matrex.StatisticsTest do
       xs = Enum.uniq(xs) |> Matrex.from_list()
       median = Statistics.median(xs)
       {first, second} = xs |> Enum.sort() |> Enum.split_while(fn x -> x <= median end)
-      length(first) == length(second) or length(first) - 1 == length(second)
+      Enum.count(first) == Enum.count(second) or Enum.count(first) - 1 == Enum.count(second)
     end
   end
 
@@ -29,7 +28,7 @@ defmodule Matrex.StatisticsTest do
   test "mode is nil if no value is repeated" do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- numbers do
-      xs |> Enum.uniq() |> Matrex.from_list() |> Statistics.mode() == nil
+      xs |> Enum.to_list() |> Enum.uniq() |> Matrex.from_list() |> Statistics.mode() == nil
     end
   end
 
@@ -40,12 +39,12 @@ defmodule Matrex.StatisticsTest do
     for {x, xs} <- numbers do
       frequent = [x]
       frequent_list = frequent |> Stream.cycle() |> Enum.take(Enum.count(xs) + 1)
-      xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Statistics.mode() == frequent
+      xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Matrex.from_list() |> Statistics.mode() == frequent
     end
   end
 
   test "mode is the most frequent set of values" do
-    numbers = [ {0.17112, 3.4, Matrex.random(4, 1)}, {0.74092, 23.968, Matrex.random(10, 1)} ]
+    numbers = [ {0.17112, 0.34, Matrex.random(4, 1)}, {0.074092, 0.23968, Matrex.random(10, 1)} ]
 
     # for {x, y, xs} in such_that(
     #           {x_, y_, _} in {number(), number(), non_empty(list(number()))}
@@ -53,12 +52,13 @@ defmodule Matrex.StatisticsTest do
     #         ) do
     for {x, y, xs} <- numbers do
       frequent_set = [x, y]
-      frequent_list = frequent_set |> Stream.cycle() |> Enum.take(2 * (length(xs) + 1))
+      frequent_list = frequent_set |> Stream.cycle() |> Enum.take(2 * (Enum.count(xs) + 1))
 
       xs
       |> Enum.reject(&Enum.member?(frequent_set, &1))
       |> Enum.concat(frequent_list)
       |> Enum.shuffle()
+      |> Matrex.from_list()
       |> Statistics.mode()
       |> Enum.sort() == frequent_set
     end
@@ -74,7 +74,9 @@ defmodule Matrex.StatisticsTest do
 
 
   test "variance is nil when list has only one element" do
-    refute Statistics.variance([42] |> Matrex.from_list)
+    assert_raise ArgumentError, fn ->
+      Statistics.variance([42] |> Matrex.from_list)
+    end
   end
 
   # property "variance is the square of standard deviation" do
@@ -94,15 +96,25 @@ defmodule Matrex.StatisticsTest do
 
 
   test "std dev is nil when list has only one element" do
-    refute Statistics.std_dev([42])
+    assert_raise ArgumentError, fn ->
+      Statistics.std_dev([42] |> Matrex.from_list())
+    end
   end
 
   test "std dev is correct for specific datasets" do
     dataset1 = DataHelper.read("Lew")
     dataset2 = DataHelper.read("Lottery")
 
+    xx =
+      dataset1[:data]
+      |> IO.inspect(label: :std_dev_data)
+      |> Enum.to_list()
+      |> Matrex.from_list()
+      |> IO.inspect(label: :std_dev_data_1)
+      |> Statistics.std_dev()
+
     assert_in_delta(
-      dataset1[:data] |> Enum.to_list() |> Statistics.std_dev(),
+      xx |> IO.inspect(label: :std_dev),
       dataset1[:std_dev],
       0.0001
     )
@@ -124,7 +136,7 @@ defmodule Matrex.StatisticsTest do
     dataset2 = DataHelper.read("Lottery")
 
     assert_in_delta(
-      dataset1[:data] |> Enum.to_list() |> Statistics.kurtosis(),
+      dataset1[:data] |> Matrex.from_list() |> Statistics.kurtosis(),
       -1.49604979214447,
       0.01
     )
@@ -266,8 +278,8 @@ defmodule Matrex.StatisticsTest do
 
 
   test "weighted mean is nil when the list lengths do not match" do
-    refute Statistics.weighted_mean([1, 2], [3, 4, 5])
-    refute Statistics.weighted_mean([1, 2, 3], [4, 5])
+    refute Statistics.weighted_mean([1, 2] |> Matrex.from_list(), [3, 4, 5] |> Matrex.from_list())
+    refute Statistics.weighted_mean([1, 2, 3] |> Matrex.from_list(), [4, 5] |> Matrex.from_list())
   end
 
   # property "weighted mean is consistent with arithmetic mean" do
@@ -279,8 +291,8 @@ defmodule Matrex.StatisticsTest do
   # end
 
   test "weighted mean is correct for a specific dataset" do
-    xs = [1, 3, 5, 6, 8, 9]
-    weights = [1.0, 0.8, 1.0, 0.9, 1.0, 0.66]
+    xs = [1, 3, 5, 6, 8, 9] |> Matrex.from_list()
+    weights = [1.0, 0.8, 1.0, 0.9, 1.0, 0.66] |> Matrex.from_list()
 
     assert_in_delta(Statistics.weighted_mean(xs, weights), 5.175, 0.001)
   end

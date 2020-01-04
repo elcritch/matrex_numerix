@@ -1,11 +1,11 @@
-defmodule Numerix.Mixfile do
+defmodule MatrexNumerix.Mixfile do
   use Mix.Project
 
   @version "0.6.0"
 
   def project do
     [
-      app: :matrex,
+      app: :matrex_numerix,
       version: @version,
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,

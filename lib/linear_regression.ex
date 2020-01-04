@@ -1,4 +1,4 @@
-defmodule Matrex.Algorithms.LinearRegression do
+defmodule MatrexNumerix.LinearRegression do
   @moduledoc """
   Linear regression functions.
 
@@ -6,7 +6,7 @@ defmodule Matrex.Algorithms.LinearRegression do
   """
 
   import Matrex.Guards
-  import Matrex.Algorithms.Statistics
+  import MatrexNumerix.Statistics
 
   alias MatrexNumerix.{Common, Correlation}
 
