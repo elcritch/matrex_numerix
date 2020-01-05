@@ -14,17 +14,12 @@ defmodule MatrexNumerix.Distance do
   betwen two vectors, i.e. the difference between predicted
   and actual values.
   """
-  @spec mse(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec mse(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def mse(x = %Matrex{}, y = %Matrex{}) do
-    p = pow(x - y, 2)
-    Statistics.mean(p.items)
+    p = Matrex.pow(x |> Matrex.subtract(y), 2)
+    Statistics.mean(p)
   end
 
-  def mse(vector1, vector2) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    mse(x, y)
-  end
 
   @doc """
   Root mean square error of two vectors, or simply the
@@ -32,7 +27,7 @@ defmodule MatrexNumerix.Distance do
   values. It is a measure of the differences between
   predicted and actual values.
   """
-  @spec rmse(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec rmse(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def rmse(vector1, vector2) do
     :math.sqrt(mse(vector1, vector2))
   end
@@ -40,10 +35,10 @@ defmodule MatrexNumerix.Distance do
   @doc """
   The Pearson's distance between two vectors.
   """
-  @spec pearson(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec pearson(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def pearson(vector1, vector2) do
     case Correlation.pearson(vector1, vector2) do
-      nil -> nil
+      # _ -> nil
       correlation -> 1.0 - correlation
     end
   end
@@ -51,11 +46,9 @@ defmodule MatrexNumerix.Distance do
   @doc """
   The Minkowski distance between two vectors.
   """
-  @spec minkowski(Common.vector(), Common.vector(), integer) :: Common.maybe_float()
-  def minkowski(x, y, p \\ 3)
-
+  @spec minkowski(Matrex.t(), Matrex.t(), integer) :: Common.maybe_float()
   def minkowski(x = %Matrex{}, y = %Matrex{}, p) do
-    norm(p, x - y)
+    norm(p, x |> Matrex.subtract(y))
   end
 
   def minkowski(vector1, vector2, p) do
@@ -67,9 +60,9 @@ defmodule MatrexNumerix.Distance do
   @doc """
   The Euclidean distance between two vectors.
   """
-  @spec euclidean(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec euclidean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def euclidean(x = %Matrex{}, y = %Matrex{}) do
-    l2_norm(x - y)
+    l2_norm(x |> Matrex.subtract(y))
   end
 
   def euclidean(vector1, vector2) do
@@ -81,9 +74,9 @@ defmodule MatrexNumerix.Distance do
   @doc """
   The Manhattan distance between two vectors.
   """
-  @spec manhattan(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec manhattan(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def manhattan(x = %Matrex{}, y = %Matrex{}) do
-    l1_norm(x - y)
+    l1_norm(x |> Matrex.subtract(y) )
   end
 
   def manhattan(vector1, vector2) do
@@ -95,7 +88,7 @@ defmodule MatrexNumerix.Distance do
   @doc """
   The Jaccard distance (1 - Jaccard index) between two vectors.
   """
-  @spec jaccard(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec jaccard(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   # def jaccard(%Matrex{items: []}, %Matrex{items: []}), do: 0.0
   # def jaccard(%Matrex{items: []}, _), do: nil
   # def jaccard(_, %Matrex{items: []}), do: nil

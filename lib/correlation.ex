@@ -5,12 +5,12 @@ defmodule MatrexNumerix.Correlation do
 
   import Matrex
   import Matrex.Guards
-  alias Matrex.Algorithms.Statistics
+  alias MatrexNumerix.Statistics
 
   @doc """
   Calculates the Pearson correlation coefficient between two vectors.
   """
-  @spec pearson(Common.vector(), Common.vector()) :: Common.maybe_float()
+  @spec pearson(Matrex.t(), Matrex.t()) :: Common.maybe_float()
 
   # def pearson(
   #       matrex_data(rows1, columns1, _data1, _first),
@@ -48,8 +48,7 @@ defmodule MatrexNumerix.Correlation do
   @doc """
   Calculates the weighted Pearson correlation coefficient between two vectors.
   """
-  @spec pearson(Common.vector(), Common.vector(), Common.vector()) :: Common.maybe_float()
-
+  @spec pearson(Matrex.t(), Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def pearson(vector1, vector2, weights) do
     weighted_covariance_xy = Statistics.weighted_covariance(vector1, vector2, weights)
     weighted_covariance_xx = Statistics.weighted_covariance(vector1, vector1, weights)

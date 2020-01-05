@@ -5,6 +5,7 @@ defmodule MatrexNumerix.LinearAlgebra do
   """
 
   import Matrex
+  alias MatrexNumerix.Math
 
   @doc """
   The L1 norm of a vector, also known as Manhattan norm.
@@ -29,7 +30,7 @@ defmodule MatrexNumerix.LinearAlgebra do
   def norm(_p, nil), do: nil
 
   def norm(p, x = %Matrex{}) do
-    s = sum(pow(abs(x), p))
+    s = sum(pow(Matrex.apply(x, :abs), p))
     Math.nth_root(s, p)
   end
 

@@ -21,7 +21,7 @@ defmodule MatrexNumerix.CorrelationTest do
     for {x, len} <- numbers  do
       xs = [x] |> Stream.cycle() |> Enum.take(len)
 
-      Correlation.pearson(xs, xs) == 0.0
+      assert Correlation.pearson(xs, xs) == 0.0
     end
   end
 
@@ -30,7 +30,7 @@ defmodule MatrexNumerix.CorrelationTest do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- numbers do
       xs = xs |> Enum.uniq() |> Matrex.from_list()
-      Correlation.pearson(xs, xs) == 1.0
+      assert Correlation.pearson(xs, xs) == 1.0
     end
   end
 
@@ -40,7 +40,7 @@ defmodule MatrexNumerix.CorrelationTest do
     for {xs, ys} <- numbers do
       {xs, ys} = equalize_length(xs, ys)
 
-      Correlation.pearson(xs, ys) |> between?(-1, 1)
+      assert Correlation.pearson(xs, ys) |> between?(-1, 1)
     end
   end
 
