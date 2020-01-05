@@ -1,13 +1,13 @@
 defmodule MatrexNumerix.KernelTest do
   use ExUnit.Case, async: true
-  use ExCheck
   import ListHelper
 
   alias MatrexNumerix.Kernel
 
-  property "rbf is between 0 and 1" do
-    for_all {xs, ys} in such_that({xxs, yys} in {non_empty(list(number())), non_empty(list(number()))}
-      when length(xxs) > 1 and length(yys) > 1) do
+  test "rbf is between 0 and 1" do
+    numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    # for {xs, ys} in such_that({xxs, yys} in {non_empty(list(number())), non_empty(list(number()))}
+    for {xs, ys} <- numbers do
 
       {xs, ys} = equalize_length(xs, ys)
 
