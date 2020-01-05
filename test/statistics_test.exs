@@ -282,13 +282,13 @@ defmodule MatrexNumerix.StatisticsTest do
 
   test "weighted mean is consistent with arithmetic mean" do
     # for_all {xs, w} in {non_empty(list(int())), pos_integer()} do
-    data = [ {Matrex.random(4, 1), 43}, {Matrex.random(10, 1), 17} ]
+    data = [ {Matrex.random(1, 4), 43}, {Matrex.random(1, 10), 17} ]
     for {xs, w} <- data do
-      weights = [w] |> Stream.cycle() |> Enum.take(Enum.count(xs)) |> Matrex.from_list() |> Matrex.transpose()
+      weights = [w] |> Stream.cycle() |> Enum.take(Enum.count(xs)) |> Matrex.from_list()
 
       IO.inspect(xs, label: :weighted_mean)
       IO.inspect(weights, label: :weighted_mean_weights)
-      assert Statistics.mean(xs) == Statistics.weighted_mean(xs, weights)
+      assert Statistics.mean(xs) - Statistics.weighted_mean(xs, weights) < 1.0e-6
     end
   end
 

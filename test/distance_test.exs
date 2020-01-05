@@ -60,7 +60,7 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "pearson distance is the inverse of its correlation" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    data = [ {Matrex.random(1, 4), Matrex.random(1, 4)}, {Matrex.random(1, 10), Matrex.random(1, 10)}, ]
     for {xs, ys} <- data do
 
       Distance.pearson(xs, ys) == 1.0 - Correlation.pearson(xs, ys)
@@ -69,7 +69,7 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "pearson distance is between 0 and 2" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    data = [ {Matrex.random(1, 4), Matrex.random(1, 4)}, {Matrex.random(1, 10), Matrex.random(1, 10)}, ]
     for {xs, ys} <- data do
 
       Distance.pearson(xs, ys) |> between?(0, 2)
