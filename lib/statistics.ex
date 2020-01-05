@@ -240,7 +240,7 @@ defmodule MatrexNumerix.Statistics do
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{} ) do
-    weighted_covariance(x, y, w, :biased)
+    weighted_covariance(x, y, w, :unbiased)
   end
 
   def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, :unbiased) do
