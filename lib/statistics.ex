@@ -233,22 +233,28 @@ defmodule MatrexNumerix.Statistics do
           Common.maybe_float()
 
   def weighted_covariance(
-        matrex_data(rows1, _columns1, _data1, _first),
-        matrex_data(rows2, _columns2, _data2, _second),
-        matrex_data(rows3, _columns3, _data3, _third)
-      ) when rows1 != rows2 or rows1 != rows3,
+        matrex_data(columns1, _data1, _first),
+        matrex_data(columns2, _data2, _second),
+        matrex_data(columns3, _data3, _third)
+      ) when columns1 != columns2 or columns1 != columns3,
       do: raise %ArgumentError{message: "incorrect sizes"}
 
   def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
-    weighted_mean1 = weighted_mean(x, w)
-    weighted_mean2 = weighted_mean(y, w)
+    wm1 = weighted_mean(x, w)
+    wm2 = weighted_mean(y, w)
     # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / Matrex.sum(w)
     # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2))
-    xm = Matrex.subtract(x, weighted_mean1)
-    ym = Matrex.subtract(y, weighted_mean2)
-    xdy = Matrex.dot(xm |> Matrex.transpose(), ym)
+    # xm1 = Matrex.subtract(x, wm1)
+    # xm2 = Matrex.subtract(x, wm2)
+    # ym1 = Matrex.subtract(y, wm2)
+    # ym2 = Matrex.subtract(y, wm1)
+    # mm = Matrex.concat(xm, ym)
+    #  = Matrex.multiply(xm , ym) |> Matrex.inner_dot(w)
+    # xdy = Matrex.dot(xm |> Matrex.transpose(), ym )
     #  sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / sum(w)
-    Matrex.sum(w |> Matrex.dot(xdy) ) / Matrex.sum(w)
+    # Matrex.sum( Matrex.dot(xdy, w |> Matrex.transpose() ) ) / Matrex.sum(w)
+    weighted_samples = w |> Matrex.multiply( Matrex.subtract(x, wm1)) |> Matrex.multiply( Matrex.subtract(y, wm2) )
+    -1.0 * Matrex.sum(weighted_samples) / (1.0 - Matrex.sum(w |> Matrex.pow(2)))
   end
 
   def weighted_covariance(xs, ys, weights) do
@@ -262,15 +268,14 @@ defmodule MatrexNumerix.Statistics do
   Calculates the weighted average of a list of numbers.
   """
   @spec weighted_mean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
-  def weighted_mean(
-        matrex_data(rows1, columns1, _data1, _first),
-        matrex_data(rows2, columns2, _data2, _second)
-      ) when rows1 != rows2 or columns1 != columns2,
-      do: raise %ArgumentError{message: "incorrect sizes"}
 
-  def weighted_mean(x = %Matrex{}, w = %Matrex{}) do
-    Matrex.sum(x |> Matrex.dot_nt(w)) / Matrex.sum(w)
+  def weighted_mean(
+    vector_data(columns1, _body1) = x,
+    vector_data(columns2, _body2) = w
+    ) when columns1 == columns2 do
+    Matrex.sum(x |> Matrex.inner_dot(w)) / Matrex.sum(w)
   end
+  def weighted_mean( %Matrex{}, %Matrex{}), do: raise %ArgumentError{message: "incorrect sizes"}
 
   @spec powered_deviations(Matrex.t(), number) :: float
   def powered_deviations(x, n) do

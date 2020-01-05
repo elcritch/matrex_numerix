@@ -34,8 +34,4 @@ defmodule MatrexNumerix.LinearAlgebra do
     Math.nth_root(s, p)
   end
 
-  def norm(p, vector) do
-    x = Matrex.new(vector)
-    norm(p, x)
-  end
 end

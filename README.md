@@ -88,11 +88,9 @@ NOTE: Parallelization can only get you so far. In terms of raw speed, a pure Eli
 
 ### Linear algebra
 
-* Dot product
 * L1-norm
 * L2-norm
 * p-norm
-* Vector subtraction and multiplication
 
 ### Linear regression
 

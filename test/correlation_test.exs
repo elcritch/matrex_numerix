@@ -4,25 +4,22 @@ defmodule MatrexNumerix.CorrelationTest do
 
   alias MatrexNumerix.Correlation
 
-  test "pearson is nil when any vector is empty" do
-    refute Correlation.pearson([], [1])
-    refute Correlation.pearson([2], [])
-    refute Correlation.pearson([], [])
-  end
-
   test "pearson is nil when the vectors are not the same size" do
-    refute Correlation.pearson([1, 2, 3], [4, 5, 6, 7])
+    assert_raise ArgumentError, fn ->
+      Correlation.pearson([1, 2, 3] |> Matrex.from_list(), [4, 5, 6, 7] |> Matrex.from_list())
+    end
   end
 
   test "pearson correlation is zero when the vectors are equal but variance is zero" do
     # for_all {x, len} in {int(), pos_integer()} do
-    numbers = [ {34, Matrex.random(4, 1)}, {74092, Matrex.random(10, 1)} ]
+    {x1, l1} = {34, 4}
+    {x2, l2} = {-402, 5}
 
-    for {x, len} <- numbers  do
-      xs = [x] |> Stream.cycle() |> Enum.take(len)
+    xs1 = [x1] |> Stream.cycle() |> Enum.take(l1) |> Matrex.from_list()
+    assert Correlation.pearson(xs1, xs1) == 0.0
 
-      assert Correlation.pearson(xs, xs) == 0.0
-    end
+    xs2 = [x2] |> Stream.cycle() |> Enum.take(l2) |> Matrex.from_list()
+    assert Correlation.pearson(xs2, xs2) == 0.0
   end
 
   test "pearson correlation is one when the vectors are equal and variance is not zero" do
@@ -45,10 +42,10 @@ defmodule MatrexNumerix.CorrelationTest do
   end
 
   test "pearson correlation is correct for a specific dataset" do
-    vector1 = DataHelper.read("Lew") |> Map.get(:data) |> Enum.take(200)
-    vector2 = DataHelper.read("Lottery") |> Map.get(:data) |> Enum.take(200)
+    vector1 = DataHelper.read("Lew") |> Map.get(:data) |> Enum.take(200) |> Matrex.from_list()
+    vector2 = DataHelper.read("Lottery") |> Map.get(:data) |> Enum.take(200) |> Matrex.from_list()
 
-    assert Correlation.pearson(vector1, vector2) == -0.02947086158072648
+    assert Correlation.pearson(vector1, vector2) - -0.02947086158072648 < 1.0e-4
   end
 
   # test "weighted pearson is nil when any vector is empty" do

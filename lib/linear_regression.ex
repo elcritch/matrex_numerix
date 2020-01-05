@@ -57,7 +57,7 @@ defmodule MatrexNumerix.LinearRegression do
   @spec r_squared(Matrex.t(), Matrex.t()) :: float
   def r_squared(predicted, actual) do
     predicted
-    |> Correlation.pearson(actual |> Matrex.transpose())
+    |> Correlation.pearson(actual)
     |> squared
   end
 

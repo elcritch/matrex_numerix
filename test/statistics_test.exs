@@ -282,28 +282,50 @@ defmodule MatrexNumerix.StatisticsTest do
 
   test "weighted mean is consistent with arithmetic mean" do
     # for_all {xs, w} in {non_empty(list(int())), pos_integer()} do
-    data = [ {Matrex.random(4, 1), 43}, {Matrex.random(10, 1), 317} ]
+    data = [ {Matrex.random(4, 1), 43}, {Matrex.random(10, 1), 17} ]
     for {xs, w} <- data do
       weights = [w] |> Stream.cycle() |> Enum.take(Enum.count(xs)) |> Matrex.from_list() |> Matrex.transpose()
 
-      Statistics.weighted_mean(xs, weights) == Statistics.mean(xs)
+      IO.inspect(xs, label: :weighted_mean)
+      IO.inspect(weights, label: :weighted_mean_weights)
+      assert Statistics.mean(xs) == Statistics.weighted_mean(xs, weights)
     end
+  end
+
+  test "weighted mean is correct for dataset1" do
+    xs = [ 0.37913, 0.53039, 0.76612, 0.13957 ] |> Matrex.from_list()
+    weights = [ 43, 43, 43, 43] |> Matrex.from_list()
+
+    assert Statistics.weighted_mean(xs, weights) - 0.4538025 < 1.0e-5
+    assert Statistics.mean(xs) - 0.4538025 < 1.0e-5
+    assert Statistics.mean(xs) - Statistics.weighted_mean(xs, weights) < 1.0e-5
   end
 
   test "weighted mean is correct for a specific dataset" do
     xs = [1, 3, 5, 6, 8, 9] |> Matrex.from_list()
     weights = [1.0, 0.8, 1.0, 0.9, 1.0, 0.66] |> Matrex.from_list()
 
-    assert_in_delta(Statistics.weighted_mean(xs, weights), 5.175, 0.001)
+    assert Statistics.weighted_mean(xs, weights) - 5.175 < 0.001
   end
 
   test "weighted covariance" do
-    x = Matrex.random(5,1)
-    y = Matrex.random(5,1)
-    w = Matrex.from_list([0.5, 0.33, 0.17])
+    x = 1..10 |> Enum.to_list |> Matrex.from_list()
+    y = [1,2,3, 8,7,6,5, 8,9,10] |> Matrex.from_list()
+    w = [ 0,0,0,1,1,1,1,1,0,0 ] |> Matrex.from_list()
 
-    expected_cov = -0.165
+    # $cov
+    # x    y
+    # x  2.5 -0.5
+    # y -0.5  1.7
 
-    Statistics.weighted_covariance(x, y, w)
+    expected_cov = Matrex.new("2.5 -0.5; -0.5 1.7")
+
+    cov11 = Statistics.weighted_covariance(x, x, w)
+    cov12 = Statistics.weighted_covariance(x, y, w)
+    cov21 = Statistics.weighted_covariance(y, x, w)
+    cov22 = Statistics.weighted_covariance(y, y, w)
+
+    cov = [ [cov11, cov12], [cov21, cov22]] |> Matrex.new()
+    assert expected_cov == cov
   end
 end
