@@ -158,8 +158,7 @@ defmodule MatrexNumerix.DistanceTest do
   end
 
   test "jaccard is nil when any one vector is empty" do
-    refute Distance.jaccard([], [1])
-    refute Distance.jaccard([2], [])
+    assert_raise ArgumentError, fn ->  Distance.jaccard([], [1]) end
   end
 
   test "jaccard is correct for specific examples" do

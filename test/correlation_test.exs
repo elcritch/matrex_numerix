@@ -59,9 +59,9 @@ defmodule MatrexNumerix.CorrelationTest do
   # end
 
   test "weighted pearson correlation with constant weights is consistent with unweighted correlation" do
-    vector1 = DataHelper.read("Lew") |> Map.get(:data) |> Enum.take(200)
-    vector2 = DataHelper.read("Lottery") |> Map.get(:data) |> Enum.take(200)
-    weights = [2.0] |> Stream.cycle() |> Enum.take(vector1 |> length)
+    vector1 = DataHelper.read("Lew") |> Map.get(:data) |> Enum.take(200) |> Matrex.from_list()
+    vector2 = DataHelper.read("Lottery") |> Map.get(:data) |> Enum.take(200) |> Matrex.from_list()
+    weights = [2.0] |> Stream.cycle() |> Enum.take(vector1 |> Enum.count) |> Matrex.from_list()
 
     weighted_correlation = Correlation.pearson(vector1, vector2, weights)
     unweighted_correlation = Correlation.pearson(vector1, vector2)

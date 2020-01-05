@@ -120,7 +120,7 @@ defmodule MatrexNumerix.StatisticsTest do
     )
 
     assert_in_delta(
-      dataset2[:data] |> Enum.to_list() |> Statistics.std_dev(),
+      dataset2[:data] |> Enum.to_list() |> Matrex.from_list() |> Statistics.std_dev(),
       dataset2[:std_dev],
       0.0001
     )

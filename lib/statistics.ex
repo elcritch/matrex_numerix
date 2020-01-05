@@ -38,7 +38,7 @@ defmodule MatrexNumerix.Statistics do
   @doc """
   The most frequent value(s) in a list.
   """
-  @spec mode(Matrex.t()) :: Common.maybe_float()
+  @spec mode(Matrex.t()) :: float
 
   def mode(x = %Matrex{}) do
     counts =
@@ -242,7 +242,11 @@ defmodule MatrexNumerix.Statistics do
   def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
     weighted_mean1 = weighted_mean(x, w)
     weighted_mean2 = weighted_mean(y, w)
-    Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / Matrex.sum(w)
+    # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / Matrex.sum(w)
+    # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2))
+    xm = Matrex.subtract(x, weighted_mean1)
+    ym = Matrex.subtract(y, weighted_mean2)
+    Matrex.sum(w |> Matrex.dot( xm ) |> Matrex.dot( ym )) / Matrex.sum(w)
   end
 
   def weighted_covariance(xs, ys, weights) do
