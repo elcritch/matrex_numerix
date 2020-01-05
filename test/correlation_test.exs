@@ -1,6 +1,5 @@
 defmodule MatrexNumerix.CorrelationTest do
   use ExUnit.Case, async: true
-  use ExCheck
   import ListHelper
 
   alias MatrexNumerix.Correlation
@@ -15,24 +14,31 @@ defmodule MatrexNumerix.CorrelationTest do
     refute Correlation.pearson([1, 2, 3], [4, 5, 6, 7])
   end
 
-  property "pearson correlation is zero when the vectors are equal but variance is zero" do
-    for_all {x, len} in {int(), pos_integer()} do
+  test "pearson correlation is zero when the vectors are equal but variance is zero" do
+    # for_all {x, len} in {int(), pos_integer()} do
+    numbers = [ {34, Matrex.random(4, 1)}, {74092, Matrex.random(10, 1)} ]
+
+    for {x, len} <- data do
       xs = [x] |> Stream.cycle() |> Enum.take(len)
 
       Correlation.pearson(xs, xs) == 0.0
     end
   end
 
-  property "pearson correlation is one when the vectors are equal and variance is not zero" do
-    for_all xs in non_empty(list(int())) do
+  test "pearson correlation is one when the vectors are equal and variance is not zero" do
+    # for_all xs in non_empty(list(int())) do
+    numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for xs <- data do
       implies length(xs) > 1 and xs == Enum.uniq(xs) do
         Correlation.pearson(xs, xs) == 1.0
       end
     end
   end
 
-  property "pearson correlation is between -1 and 1" do
-    for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
+  test "pearson correlation is between -1 and 1" do
+    # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
+    numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for {xs, ys} <- data do
       {xs, ys} = equalize_length(xs, ys)
 
       Correlation.pearson(xs, ys) |> between?(-1, 1)
@@ -46,12 +52,12 @@ defmodule MatrexNumerix.CorrelationTest do
     assert Correlation.pearson(vector1, vector2) == -0.02947086158072648
   end
 
-  test "weighted pearson is nil when any vector is empty" do
-    refute Correlation.pearson([], [1], [2])
-    refute Correlation.pearson([1], [], [2])
-    refute Correlation.pearson([1], [2], [])
-    refute Correlation.pearson([], [], [])
-  end
+  # test "weighted pearson is nil when any vector is empty" do
+  #   refute Correlation.pearson([], [1], [2])
+  #   refute Correlation.pearson([1], [], [2])
+  #   refute Correlation.pearson([1], [2], [])
+  #   refute Correlation.pearson([], [], [])
+  # end
 
   test "weighted pearson correlation with constant weights is consistent with unweighted correlation" do
     vector1 = DataHelper.read("Lew") |> Map.get(:data) |> Enum.take(200)

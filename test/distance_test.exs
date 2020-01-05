@@ -1,6 +1,5 @@
 defmodule MatrexNumerix.DistanceTest do
   use ExUnit.Case, async: true
-  use ExCheck
   import ListHelper
 
   alias MatrexNumerix.{Distance, Correlation}
@@ -11,15 +10,21 @@ defmodule MatrexNumerix.DistanceTest do
     assert Distance.mse(vector1, vector2) == 2.6
   end
 
-  property "MSE is 0 when the vectors are equal" do
-    for_all xs in non_empty(list(number())) do
+  test "MSE is 0 when the vectors are equal" do
+    # for_all xs in non_empty(list(number())) do
+    numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+
+    for xs < numbers do
       Distance.mse(xs, xs) == 0
     end
   end
 
-  property "MSE is not 0 when the vectors are different" do
-    for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-      {xs, ys} = equalize_length(xs, ys)
+  test "MSE is not 0 when the vectors are different" do
+    # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
+
+    numbers = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+
+    for {xs, ys} <- data do
 
       implies xs != ys do
         Distance.mse(xs, ys) != 0
@@ -33,13 +38,15 @@ defmodule MatrexNumerix.DistanceTest do
     assert Distance.rmse(vector1, vector2) == 2.9154759474226504
   end
 
-  property "RMSE is 0 when the vectors are equal" do
+  test "RMSE is 0 when the vectors are equal" do
+    # for_all xs in non_empty(list(number())) do
     for_all xs in non_empty(list(number())) do
       Distance.rmse(xs, xs) == 0
     end
   end
 
-  property "RMSE is not 0 when the vectors are different" do
+  test "RMSE is not 0 when the vectors are different" do
+    # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
     for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
       {xs, ys} = equalize_length(xs, ys)
 
@@ -55,7 +62,8 @@ defmodule MatrexNumerix.DistanceTest do
     refute Distance.pearson([], [])
   end
 
-  property "pearson distance is the inverse of its correlation" do
+  test "pearson distance is the inverse of its correlation" do
+    # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
     for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
       {xs, ys} = equalize_length(xs, ys)
 
@@ -63,7 +71,8 @@ defmodule MatrexNumerix.DistanceTest do
     end
   end
 
-  property "pearson distance is between 0 and 2" do
+  test "pearson distance is between 0 and 2" do
+    # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
     for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
       {xs, ys} = equalize_length(xs, ys)
 
@@ -77,7 +86,8 @@ defmodule MatrexNumerix.DistanceTest do
     assert Distance.minkowski([], []) == 0
   end
 
-  property "minkowski distance is 0 when the vectors are equal" do
+  test "minkowski distance is 0 when the vectors are equal" do
+    # for_all xs in non_empty(list(number())) do
     for_all xs in non_empty(list(number())) do
       Distance.minkowski(xs, xs) == 0
     end
@@ -104,7 +114,8 @@ defmodule MatrexNumerix.DistanceTest do
     assert Distance.euclidean([], []) == 0
   end
 
-  property "euclidean distance is 0 when the vectors are equal" do
+  test "euclidean distance is 0 when the vectors are equal" do
+    # for_all xs in non_empty(list(number())) do
     for_all xs in non_empty(list(number())) do
       Distance.euclidean(xs, xs) == 0
     end
@@ -123,7 +134,8 @@ defmodule MatrexNumerix.DistanceTest do
     assert Distance.manhattan([], []) == 0
   end
 
-  property "manhattan distance is 0 when the vectors are equal" do
+  test "manhattan distance is 0 when the vectors are equal" do
+    # for_all xs in non_empty(list(number())) do
     for_all xs in non_empty(list(number())) do
       Distance.manhattan(xs, xs) == 0
     end
@@ -158,7 +170,8 @@ defmodule MatrexNumerix.DistanceTest do
     end)
   end
 
-  property "jaccard is between 0 and 1" do
+  test "jaccard is between 0 and 1" do
+    # for_all {xs, ys} in {non_empty(list(non_neg_integer())), non_empty(list(non_neg_integer()))} do
     for_all {xs, ys} in {non_empty(list(non_neg_integer())), non_empty(list(non_neg_integer()))} do
       Distance.jaccard(xs, ys) |> between?(0, 1)
     end

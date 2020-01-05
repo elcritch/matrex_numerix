@@ -1,6 +1,5 @@
 defmodule MatrexNumerix.SpecialTest do
   use ExUnit.Case, async: true
-  use ExCheck
 
   import ListHelper
 
@@ -28,8 +27,14 @@ defmodule MatrexNumerix.SpecialTest do
     end)
   end
 
-  property "logistic is the inverse of logit" do
-    for_all x in int(0, 1000) do
+  test "logistic is the inverse of logit" do
+    numbers = [
+      Enum.random(1..1_000),
+      Enum.random(1..1_000),
+    ]
+
+    # for_all x in int(0, 1000) do
+    for x <- data do
       p = x / 1000
       logit = Special.logit(p)
 
@@ -41,8 +46,14 @@ defmodule MatrexNumerix.SpecialTest do
     end
   end
 
-  property "logistic is between 0 and 1" do
-    for_all x in number() do
+  test "logistic is between 0 and 1" do
+    # for_all x in number() do
+    data = [
+      :rand.uniform(),
+      :rand.uniform(),
+    ]
+
+    for x <- data do
       Special.logistic(x) |> between?(0, 1)
     end
   end
