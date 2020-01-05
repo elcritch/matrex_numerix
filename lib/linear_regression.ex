@@ -5,11 +5,10 @@ defmodule MatrexNumerix.LinearRegression do
   Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
-  import Matrex
   import Matrex.Guards
   import MatrexNumerix.Statistics
 
-  alias MatrexNumerix.{Common, Correlation}
+  alias MatrexNumerix.Correlation
 
   @doc """
   Least squares best fit for points `{x, y}` to a line `y:x↦a+bx`
@@ -18,13 +17,11 @@ defmodule MatrexNumerix.LinearRegression do
   """
   @spec fit( %Matrex{}, %Matrex{} ) :: {float, float} | no_return()
 
-  def fit(
-        matrex_data(rows1, columns1, _data1, _x),
-        matrex_data(rows2, columns2, _data2, _y)
-      ) when rows1 != rows2 or columns1 != columns2,
-      do: raise %ArgumentError{message: "mismatched sizes"}
 
-  def fit( %Matrex{} = x, %Matrex{} = y) do
+  def fit(
+        vector_data(columns1, _data1, _x) = x,
+        vector_data(columns2, _data2, _y) = y
+      ) when columns1 == columns2 do
 
     x_mean = mean(x)
     y_mean = mean(y)
@@ -34,6 +31,9 @@ defmodule MatrexNumerix.LinearRegression do
     intercept = y_mean - slope * x_mean
     {intercept, slope}
   end
+
+  def fit(%Matrex{} = _x, %Matrex{} = _y),
+      do: raise %ArgumentError{message: "mismatched sizes"}
 
   @doc """
   Estimates a response `y` given a predictor `x`

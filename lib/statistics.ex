@@ -38,9 +38,9 @@ defmodule MatrexNumerix.Statistics do
   @doc """
   The most frequent value(s) in a list.
   """
-  @spec mode(Matrex.t()) :: float
+  @spec mode(Matrex.t()) :: Common.maybe_float() | nil
 
-  def mode(x = %Matrex{}) do
+  def mode( vector_data(_columns1, _data1, _first) = x) do
     counts =
       Enum.reduce(x, %{}, fn i, acc ->
         acc |> Map.update(i, 1, fn count -> count + 1 end)
@@ -58,6 +58,8 @@ defmodule MatrexNumerix.Statistics do
         |> Enum.map(fn {i, _count} -> i end)
     end
   end
+
+  def mode( %Matrex{} = _x), do: raise %ArgumentError{message: "incorrect sizes"}
 
   @doc """
   The difference between the largest and smallest values in a list.
@@ -80,14 +82,15 @@ defmodule MatrexNumerix.Statistics do
   """
   @spec variance(Matrex.t()) :: Common.maybe_float()
 
-  def variance(
-        matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 and columns1 <= 1,
-      do: raise %ArgumentError{message: "incorrect sizes"}
+  def variance(vector_data(columns1, _data1, _first) = _x) when columns1 == 1,
+    do: raise %ArgumentError{message: "incorrect sizes"}
 
-  def variance(x = %Matrex{}) do
-    powered_deviations(x, 2) / (Enum.count(x) - 1)
+  def variance(vector_data(columns1, _data1, _first) = x) do
+    powered_deviations(x, 2) / (columns1 - 1)
   end
+
+  def variance(%Matrex{} = _x),
+    do: raise %ArgumentError{message: "incorrect sizes"}
 
   @doc """
   The variance for a full population.
@@ -101,12 +104,16 @@ defmodule MatrexNumerix.Statistics do
   It measures the amount of variation of the vector.
   """
   @spec std_dev(Matrex.t()) :: Common.maybe_float()
-  def std_dev(
-        matrex_data(rows1, columns1, _data1, _first)
-      ) when rows1 <= 1 and columns1 <= 1,
-      do: raise %ArgumentError{message: "incorrect sizes"}
 
-  def std_dev(x = %Matrex{}), do: :math.sqrt(variance(x))
+  def std_dev( vector_data(columns1, _data1, _first) = _x ) when columns1 == 1,
+    do: raise %ArgumentError{message: "incorrect sizes"}
+
+  def std_dev( vector_data(_columns1, _data1, _first) = x ) do
+    :math.sqrt(variance(x))
+  end
+
+  def std_dev(_x = %Matrex{}),
+    do: raise %ArgumentError{message: "incorrect sizes"}
 
   @doc """
   The standard deviation for a full population.
@@ -130,8 +137,8 @@ defmodule MatrexNumerix.Statistics do
   Like skewness, it describes the shape of a probability distribution.
   """
   @spec kurtosis(Matrex.t()) :: float
-  def kurtosis(x = %Matrex{}), do: moment(x, 4) / :math.pow(population_variance(x), 2) - 3
-
+  def kurtosis( vector_data(_columns1, _data1, _first) = x),
+      do: moment(x, 4.0) / :math.pow(population_variance(x), 2.0) - 3.0
 
   @doc """
   The skewness of a frequency-distribution curve.
@@ -147,27 +154,17 @@ defmodule MatrexNumerix.Statistics do
   It is a measure of how much the two vectors change together.
   """
   @spec covariance(Matrex.t(), Matrex.t()) :: Common.maybe_float()
-  def covariance(
-        matrex_data(rows1, columns1, _data1, _first),
-        matrex_data(rows2, columns2, _data2, _second)
-      ) when rows1 <= 1 and columns1 <= 1 or rows2 <= 1 and columns2 <= 1,
-      do: raise %ArgumentError{message: "incorrect sizes"}
-  def covariance(
-        matrex_data(rows1, columns1, _data1, _first),
-        matrex_data(rows2, columns2, _data2, _second)
-      ) when rows1 != rows2 or columns1 != columns2,
-      do: raise %ArgumentError{message: "incorrect sizes"}
 
-  def covariance(x = %Matrex{}, y = %Matrex{}) do
-    divisor = Enum.count(x) - 1
+  def covariance(
+        vector_data(columns1, _data1, _first) = x,
+        vector_data(columns2, _data2, _second) = y
+      ) when columns1 == columns2 do
+    divisor = columns2 - 1
     do_covariance(x, y, divisor)
   end
 
-  def covariance(xs, ys) do
-    x = Matrex.new(xs)
-    y = Matrex.new(ys)
-    covariance(x, y)
-  end
+  def covariance(%Matrex{} = _x, %Matrex{} = _y),
+      do: raise %ArgumentError{message: "incorrect sizes"}
 
   @doc """
   Calculates the population covariance from two full population vectors.
@@ -176,28 +173,22 @@ defmodule MatrexNumerix.Statistics do
   @spec population_covariance(Matrex.t(), Matrex.t()) :: Common.maybe_float()
 
   def population_covariance(
-        matrex_data(rows1, columns1, _data1, _first),
-        matrex_data(rows2, columns2, _data2, _second)
-      ) when rows1 != rows2 or columns1 != columns2,
-      do: raise %ArgumentError{message: "incorrect sizes"}
-
-  def population_covariance(x = %Matrex{}, y = %Matrex{}) do
-    divisor = Enum.count(x)
+        vector_data(columns1, _data1, _first) = x,
+        vector_data(columns2, _data2, _second) = y
+      ) when columns1 == columns2 do
+    divisor = columns1
     do_covariance(x, y, divisor)
   end
 
-  def population_covariance(xs, ys) do
-    x = Matrex.new(xs)
-    y = Matrex.new(ys)
-    population_covariance(x, y)
-  end
+  def population_covariance( %Matrex{}, %Matrex{}),
+    do: raise %ArgumentError{message: "incorrect sizes"}
 
   @doc """
   Estimates the tau-th quantile from the vector.
   Approximately median-unbiased irrespective of the sample distribution.
   This implements the R-8 type of https://en.wikipedia.org/wiki/Quantile.
   """
-  @spec quantile(Matrex.t(), number) :: Common.maybe_float()
+  @spec quantile(Matrex.t(), number) :: float | nil
   def quantile(_xs, tau) when tau < 0 or tau > 1, do: nil
 
   def quantile(x = %Matrex{}, tau) do
@@ -205,11 +196,6 @@ defmodule MatrexNumerix.Statistics do
     h = (length(sorted_x) + 1 / 3) * tau + 1 / 3
     hf = h |> Float.floor() |> round
     do_quantile(sorted_x, h, hf)
-  end
-
-  def quantile(xs, tau) do
-    x = Matrex.new(xs)
-    quantile(x, tau)
   end
 
   @doc """
@@ -274,17 +260,17 @@ defmodule MatrexNumerix.Statistics do
   @spec weighted_mean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
 
   def weighted_mean(
-    vector_data(columns1, _body1) = x,
-    vector_data(columns2, _body2) = w
-    ) when columns1 == columns2 do
+        vector_data(columns1, _body1) = x,
+        vector_data(columns2, _body2) = w
+      ) when columns1 == columns2 do
     Matrex.sum(x |> Matrex.inner_dot(w)) / Matrex.sum(w)
   end
-  def weighted_mean( %Matrex{}, %Matrex{}), do: raise %ArgumentError{message: "incorrect sizes"}
+
+  def weighted_mean( %Matrex{}, %Matrex{} ), do: raise %ArgumentError{message: "incorrect sizes"}
 
   @spec powered_deviations(Matrex.t(), number) :: float
-  def powered_deviations(x, n) do
-    x_mean = mean(x)
-    Matrex.sum(Matrex.pow(x |> Matrex.subtract(x_mean), n))
+  def powered_deviations( vector_data(_columns1, _data1, _first) = x, n) do
+    Matrex.pow(Matrex.subtract(x, mean(x)), n) |> Matrex.sum()
   end
 
   defp do_covariance(x, y, divisor) do
