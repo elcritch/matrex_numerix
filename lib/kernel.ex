@@ -15,17 +15,11 @@ defmodule MatrexNumerix.Kernel do
   the function acts as the activation function for the network.
   """
   @spec rbf(Common.vector(), Common.vector(), integer) :: Common.maybe_float()
-  def rbf(x, y, gamma \\ 10)
 
-  def rbf(x = %Matrex{}, y = %Matrex{}, gamma) do
-    p = pow(x - y, 2)
+  def rbf(x = %Matrex{}, y = %Matrex{}, gamma \\ 10) do
+    p = pow(x |> Matrex.subtract(y), 2)
     len = sum(p)
     :math.exp(-gamma * len)
   end
 
-  def rbf(vector1, vector2, gamma) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    rbf(x, y, gamma)
-  end
 end

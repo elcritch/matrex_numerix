@@ -4,6 +4,7 @@ defmodule MatrexNumerix.Statistics do
   """
 
   import Matrex.Guards
+  alias MatrexNumerix.Common
 
   @doc """
   The average of a list of numbers.
@@ -82,7 +83,7 @@ defmodule MatrexNumerix.Statistics do
   The unbiased population variance from a sample.
   It measures how far the vector is spread out from the mean.
   """
-  @spec variance(Matrex.t()) :: Common.maybe_float()
+
   def variance(
         matrex_data(rows1, columns1, _data1, _first)
       ) when rows1 <= 1 and columns1 <= 1,

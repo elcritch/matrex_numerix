@@ -5,6 +5,7 @@ defmodule MatrexNumerix.LinearRegression do
   Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
+  import Matrex
   import Matrex.Guards
   import MatrexNumerix.Statistics
 
@@ -15,16 +16,17 @@ defmodule MatrexNumerix.LinearRegression do
   where `x` is the predictor and `y` the response.
   Returns a tuple containing the intercept `a` and slope `b`.
   """
-  @spec fit(Common.vector(), Common.vector()) :: {float, float}
+  @spec fit(Matrex.t(), Matrex.t()) :: {float, float}
 
   def fit(
         matrex_data(rows1, columns1, _data1, _x),
         matrex_data(rows2, columns2, _data2, _y)
-      ) when rows1 != rows2 or columns1 != columns2, do: raise %ArgumentError{message: "mismatched sizes"}
+      ) when rows1 != rows2 or columns1 != columns2,
+      do: raise %ArgumentError{message: "mismatched sizes"}
 
   def fit(
-        matrex_data(rows1, columns1, _data1, _) = x,
-        matrex_data(rows2, columns2, _data2, _) = y
+        matrex_data(rows1, columns1, _data1, x),
+        matrex_data(rows2, columns2, _data2, y)
       ) when rows1 == rows2 and columns1 == columns2 do
 
     x_mean = mean(x)
@@ -41,7 +43,7 @@ defmodule MatrexNumerix.LinearRegression do
   and a set of predictors and responses, i.e.
   it calculates `y` in `y:x↦a+bx`.
   """
-  @spec predict(number, Common.vector(), Common.vector()) :: number
+  @spec predict(number, Matrex.t(), Matrex.t()) :: number
   def predict(x, xs, ys) do
     {intercept, slope} = fit(xs, ys)
     intercept + slope * x
@@ -55,13 +57,13 @@ defmodule MatrexNumerix.LinearRegression do
   a prediction that is worse than the mean and 1
   indicates a perfect prediction.
   """
-  @spec r_squared(Common.vector(), Common.vector()) :: float
+  @spec r_squared(Matrex.t(), Matrex.t()) :: float
   def r_squared(predicted, actual) do
     predicted
     |> Correlation.pearson(actual |> Matrex.transpose())
     |> squared
   end
 
-  defp squared(nil), do: nil
+  # defp squared(nil), do: nil
   defp squared(correlation), do: :math.pow(correlation, 2)
 end

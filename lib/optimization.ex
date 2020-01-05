@@ -24,7 +24,6 @@ defmodule MatrexNumerix.Optimization do
     * `:iterations` - the maximum number of generations to evolve the solutions
   """
   @spec genetic([Range.t()], ([integer] -> number), Keyword.t()) :: [integer]
-  @lint [{Credo.Check.Refactor.Nesting, false}]
   def genetic(domain, cost_fun, opts \\ []) do
     merged_opts = Keyword.merge(@default_opts, opts)
     top_elite = round(merged_opts[:elite_fraction] * merged_opts[:population_size])

@@ -16,7 +16,7 @@ defmodule MatrexNumerix.Common do
   @typedoc """
   Something that may be a float.
   """
-  @type maybe_float :: float | nil
+  @type maybe_float :: float | no_return()
 
   @typedoc """
   A type representing a vector (1D Matrex) of numbers.
