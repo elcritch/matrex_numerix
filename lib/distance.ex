@@ -48,14 +48,8 @@ defmodule MatrexNumerix.Distance do
   The Minkowski distance between two vectors.
   """
   @spec minkowski(Matrex.t(), Matrex.t(), integer) :: Common.maybe_float()
-  def minkowski(x = %Matrex{}, y = %Matrex{}, p) do
+  def minkowski(x = %Matrex{}, y = %Matrex{}, p \\ 3) do
     norm(p, x |> Matrex.subtract(y))
-  end
-
-  def minkowski(vector1, vector2, p) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    minkowski(x, y, p)
   end
 
   @doc """

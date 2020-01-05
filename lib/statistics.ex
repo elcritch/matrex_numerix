@@ -244,9 +244,11 @@ defmodule MatrexNumerix.Statistics do
     weighted_mean2 = weighted_mean(y, w)
     # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / Matrex.sum(w)
     # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2))
-    xm = Matrex.subtract(x, weighted_mean1) |> Matrex.transpose()
+    xm = Matrex.subtract(x, weighted_mean1)
     ym = Matrex.subtract(y, weighted_mean2)
-    Matrex.sum(w |> Matrex.dot( xm ) |> Matrex.dot( ym )) / Matrex.sum(w)
+    xdy = Matrex.dot(xm |> Matrex.transpose(), ym)
+    #  sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / sum(w)
+    Matrex.sum(w |> Matrex.dot(xdy) ) / Matrex.sum(w)
   end
 
   def weighted_covariance(xs, ys, weights) do

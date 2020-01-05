@@ -280,18 +280,30 @@ defmodule MatrexNumerix.StatisticsTest do
     end
   end
 
-  # property "weighted mean is consistent with arithmetic mean" do
-  #   for_all {xs, w} in {non_empty(list(int())), pos_integer()} do
-  #     weights = [w] |> Stream.cycle() |> Enum.take(length(xs))
+  test "weighted mean is consistent with arithmetic mean" do
+    # for_all {xs, w} in {non_empty(list(int())), pos_integer()} do
+    data = [ {Matrex.random(4, 1), 43}, {Matrex.random(10, 1), 317} ]
+    for {xs, w} <- data do
+      weights = [w] |> Stream.cycle() |> Enum.take(Enum.count(xs)) |> Matrex.from_list() |> Matrex.transpose()
 
-  #     Statistics.weighted_mean(xs, weights) == Statistics.mean(xs)
-  #   end
-  # end
+      Statistics.weighted_mean(xs, weights) == Statistics.mean(xs)
+    end
+  end
 
   test "weighted mean is correct for a specific dataset" do
     xs = [1, 3, 5, 6, 8, 9] |> Matrex.from_list()
     weights = [1.0, 0.8, 1.0, 0.9, 1.0, 0.66] |> Matrex.from_list()
 
     assert_in_delta(Statistics.weighted_mean(xs, weights), 5.175, 0.001)
+  end
+
+  test "weighted covariance" do
+    x = Matrex.random(5,1)
+    y = Matrex.random(5,1)
+    w = Matrex.from_list([0.5, 0.33, 0.17])
+
+    expected_cov = -0.165
+
+    Statistics.weighted_covariance(x, y, w)
   end
 end
