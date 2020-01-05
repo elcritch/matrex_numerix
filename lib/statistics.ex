@@ -229,9 +229,7 @@ defmodule MatrexNumerix.Statistics do
   @doc """
   Calculates the weighted measure of how much two vectors change together.
   """
-  @spec weighted_covariance(Matrex.t(), Matrex.t(), Matrex.t()) ::
-          Common.maybe_float()
-
+  @spec weighted_covariance(Matrex.t(), Matrex.t(), Matrex.t()) :: float
   def weighted_covariance(
         matrex_data(columns1, _data1, _first),
         matrex_data(columns2, _data2, _second),
@@ -243,6 +241,7 @@ defmodule MatrexNumerix.Statistics do
     weighted_covariance(x, y, w, :unbiased)
   end
 
+  @spec weighted_covariance(Matrex.t(), Matrex.t(), Matrex.t(), :biased | :unbiased) :: float
   def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, :unbiased) do
     wm1 = weighted_mean(x, w)
     wm2 = weighted_mean(y, w)
@@ -256,13 +255,17 @@ defmodule MatrexNumerix.Statistics do
     1.0 * Matrex.sum(weighted_samples) / Matrex.sum(w)
   end
 
+  @doc """
+  Calculates the weighted covariance matrix of two observation vectors.
+  """
+  @spec weighted_covariance_matrix(Matrex.t(), Matrex.t(), Matrex.t(), :biased | :unbiased) :: Matrex.t()
   def weighted_covariance_matrix(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, kind) do
     cov11 = weighted_covariance(x, x, w, kind)
     cov12 = weighted_covariance(x, y, w, kind)
     cov21 = weighted_covariance(y, x, w, kind)
     cov22 = weighted_covariance(y, y, w, kind)
 
-    [[cov11, cov12], [cov21, cov22]] |> Matrex.new()
+    Matrex.new([[cov11, cov12], [cov21, cov22]])
   end
 
   @doc """
