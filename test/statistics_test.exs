@@ -291,8 +291,8 @@ defmodule MatrexNumerix.StatisticsTest do
     for {xs, w} <- data do
       weights = [w] |> Stream.cycle() |> Enum.take(Enum.count(xs)) |> Matrex.from_list()
 
-      IO.inspect(xs, label: :weighted_mean)
-      IO.inspect(weights, label: :weighted_mean_weights)
+      # IO.inspect(xs, label: :weighted_mean)
+      # IO.inspect(weights, label: :weighted_mean_weights)
       assert Statistics.mean(xs) - Statistics.weighted_mean(xs, weights) < 1.0e-6
     end
   end

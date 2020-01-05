@@ -65,8 +65,8 @@ defmodule MatrexNumerix.CorrelationTest do
     # end
     IO.puts("\n")
 
-    weighted_correlation = Correlation.pearson(vector1, vector2, weights) |> IO.inspect(label: :weighted_corr)
-    unweighted_correlation = Correlation.pearson(vector1, vector2) |> IO.inspect(label: :unweighted_corr)
+    weighted_correlation = Correlation.pearson(vector1, vector2, weights) # |> IO.inspect(label: :weighted_corr)
+    unweighted_correlation = Correlation.pearson(vector1, vector2) # |> IO.inspect(label: :unweighted_corr)
 
     IO.puts("\n")
     assert_in_delta(weighted_correlation, unweighted_correlation, 1.0e-6)
