@@ -22,11 +22,11 @@ defmodule MatrexNumerix.DistanceTest do
   test "MSE is not 0 when the vectors are different" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
 
-    numbers = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
 
     for {xs, ys} <- data do
 
-      implies xs != ys do
+      if xs != ys do
         Distance.mse(xs, ys) != 0
       end
     end
@@ -40,17 +40,19 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "RMSE is 0 when the vectors are equal" do
     # for_all xs in non_empty(list(number())) do
-    for_all xs in non_empty(list(number())) do
+    data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for xs <- data do
       Distance.rmse(xs, xs) == 0
     end
   end
 
   test "RMSE is not 0 when the vectors are different" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-    for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-      {xs, ys} = equalize_length(xs, ys)
+    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
 
-      implies xs != ys do
+    for {xs, ys} <- data do
+
+      if xs != ys do
         Distance.rmse(xs, ys) != 0
       end
     end
@@ -64,8 +66,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "pearson distance is the inverse of its correlation" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-    for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-      {xs, ys} = equalize_length(xs, ys)
+    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    for {xs, ys} <- data do
 
       Distance.pearson(xs, ys) == 1.0 - Correlation.pearson(xs, ys)
     end
@@ -73,8 +75,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "pearson distance is between 0 and 2" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-    for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
-      {xs, ys} = equalize_length(xs, ys)
+    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    for {xs, ys} <- data do
 
       Distance.pearson(xs, ys) |> between?(0, 2)
     end
@@ -88,7 +90,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "minkowski distance is 0 when the vectors are equal" do
     # for_all xs in non_empty(list(number())) do
-    for_all xs in non_empty(list(number())) do
+    data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for xs <- data do
       Distance.minkowski(xs, xs) == 0
     end
   end
@@ -116,7 +119,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "euclidean distance is 0 when the vectors are equal" do
     # for_all xs in non_empty(list(number())) do
-    for_all xs in non_empty(list(number())) do
+    data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for xs <- data do
       Distance.euclidean(xs, xs) == 0
     end
   end
@@ -136,7 +140,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "manhattan distance is 0 when the vectors are equal" do
     # for_all xs in non_empty(list(number())) do
-    for_all xs in non_empty(list(number())) do
+    data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
+    for xs <- data do
       Distance.manhattan(xs, xs) == 0
     end
   end
@@ -172,7 +177,8 @@ defmodule MatrexNumerix.DistanceTest do
 
   test "jaccard is between 0 and 1" do
     # for_all {xs, ys} in {non_empty(list(non_neg_integer())), non_empty(list(non_neg_integer()))} do
-    for_all {xs, ys} in {non_empty(list(non_neg_integer())), non_empty(list(non_neg_integer()))} do
+    data = [ {Matrex.random(4, 1), Matrex.random(4, 1)}, {Matrex.random(10, 1), Matrex.random(10, 1)}, ]
+    for {xs, ys} <- data do
       Distance.jaccard(xs, ys) |> between?(0, 1)
     end
   end
