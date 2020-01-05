@@ -12,7 +12,7 @@ defmodule MatrexNumerix.StatisticsTest do
       xs = Enum.uniq(xs) |> Matrex.from_list()
       median = Statistics.median(xs)
       {first, second} = xs |> Enum.sort() |> Enum.split_while(fn x -> x <= median end)
-      Enum.count(first) == Enum.count(second) or Enum.count(first) - 1 == Enum.count(second)
+      assert Enum.count(first) == Enum.count(second) or Enum.count(first) - 1 == Enum.count(second)
     end
   end
 
@@ -28,7 +28,7 @@ defmodule MatrexNumerix.StatisticsTest do
   test "mode is nil if no value is repeated" do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- numbers do
-      xs |> Enum.to_list() |> Enum.uniq() |> Matrex.from_list() |> Statistics.mode() == nil
+      assert xs |> Enum.to_list() |> Enum.uniq() |> Matrex.from_list() |> Statistics.mode() == nil
     end
   end
 
@@ -37,10 +37,10 @@ defmodule MatrexNumerix.StatisticsTest do
 
     # for {x, xs} in {number(), non_empty(list(number()))} do
     for {x, xs} <- numbers do
-      frequent = [x]
+      frequent = [x] |> Matrex.from_list()
       frequent_list = frequent |> Stream.cycle() |> Enum.take(Enum.count(xs) + 1)
-      val = xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Matrex.from_list() |> Statistics.mode()
-      assert val == frequent
+      val = xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Matrex.from_list() |> Statistics.mode() |> Matrex.from_list()
+      assert val |> Matrex.subtract(frequent) |> Matrex.sum() < 1.0e-5
     end
   end
 
