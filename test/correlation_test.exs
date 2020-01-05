@@ -27,7 +27,7 @@ defmodule MatrexNumerix.CorrelationTest do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- numbers do
       xs = xs |> Enum.uniq() |> Matrex.from_list()
-      assert Correlation.pearson(xs, xs) == 1.0
+      assert abs(Correlation.pearson(xs, xs) - 1.0) < 1.0e-4
     end
   end
 

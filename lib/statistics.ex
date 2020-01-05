@@ -256,6 +256,15 @@ defmodule MatrexNumerix.Statistics do
     1.0 * Matrex.sum(weighted_samples) / Matrex.sum(w)
   end
 
+  def weighted_covariance_matrix(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, kind) do
+    cov11 = weighted_covariance(x, x, w, kind)
+    cov12 = weighted_covariance(x, y, w, kind)
+    cov21 = weighted_covariance(y, x, w, kind)
+    cov22 = weighted_covariance(y, y, w, kind)
+
+    [[cov11, cov12], [cov21, cov22]] |> Matrex.new()
+  end
+
   @doc """
   Calculates the weighted average of a list of numbers.
   """

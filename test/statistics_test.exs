@@ -321,12 +321,15 @@ defmodule MatrexNumerix.StatisticsTest do
     # Unbiased
     expected_unbiased_cov = Matrex.new("2.5 -0.5; -0.5 1.7")
 
-    cov11 = Statistics.weighted_covariance(x, x, w, :unbiased)
-    cov12 = Statistics.weighted_covariance(x, y, w, :unbiased)
-    cov21 = Statistics.weighted_covariance(y, x, w, :unbiased)
-    cov22 = Statistics.weighted_covariance(y, y, w, :unbiased)
+    # cov11 = Statistics.weighted_covariance(x, x, w, :unbiased)
+    # cov12 = Statistics.weighted_covariance(x, y, w, :unbiased)
+    # cov21 = Statistics.weighted_covariance(y, x, w, :unbiased)
+    # cov22 = Statistics.weighted_covariance(y, y, w, :unbiased)
+    # unbiased_cov = [ [cov11, cov12], [cov21, cov22]] |> Matrex.new()
 
-    unbiased_cov = [ [cov11, cov12], [cov21, cov22]] |> Matrex.new()
+    # assert expected_unbiased_cov == unbiased_cov
+
+    unbiased_cov = Statistics.weighted_covariance_matrix(x, y, w, :unbiased)
     assert expected_unbiased_cov == unbiased_cov
 
     # True (biased)
@@ -336,12 +339,13 @@ defmodule MatrexNumerix.StatisticsTest do
     # y -0.4  1.36
     expected_biased_cov = Matrex.new("2.0 -0.40; -0.4 1.36")
 
-    cov11 = Statistics.weighted_covariance(x, x, w, :biased)
-    cov12 = Statistics.weighted_covariance(x, y, w, :biased)
-    cov21 = Statistics.weighted_covariance(y, x, w, :biased)
-    cov22 = Statistics.weighted_covariance(y, y, w, :biased)
+    # cov11 = Statistics.weighted_covariance(x, x, w, :biased)
+    # cov12 = Statistics.weighted_covariance(x, y, w, :biased)
+    # cov21 = Statistics.weighted_covariance(y, x, w, :biased)
+    # cov22 = Statistics.weighted_covariance(y, y, w, :biased)
+    # biased_cov = [ [cov11, cov12], [cov21, cov22]] |> Matrex.new()
 
-    biased_cov = [ [cov11, cov12], [cov21, cov22]] |> Matrex.new()
+    biased_cov = Statistics.weighted_covariance_matrix(x, y, w, :biased)
     assert expected_biased_cov == biased_cov
 
   end
