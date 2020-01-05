@@ -239,29 +239,21 @@ defmodule MatrexNumerix.Statistics do
       ) when columns1 != columns2 or columns1 != columns3,
       do: raise %ArgumentError{message: "incorrect sizes"}
 
-  def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
+  def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{} ) do
+    weighted_covariance(x, y, w, :biased)
+  end
+
+  def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, :unbiased) do
     wm1 = weighted_mean(x, w)
     wm2 = weighted_mean(y, w)
-    # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / Matrex.sum(w)
-    # Matrex.sum(w * (x - weighted_mean1) * (y - weighted_mean2))
-    # xm1 = Matrex.subtract(x, wm1)
-    # xm2 = Matrex.subtract(x, wm2)
-    # ym1 = Matrex.subtract(y, wm2)
-    # ym2 = Matrex.subtract(y, wm1)
-    # mm = Matrex.concat(xm, ym)
-    #  = Matrex.multiply(xm , ym) |> Matrex.inner_dot(w)
-    # xdy = Matrex.dot(xm |> Matrex.transpose(), ym )
-    #  sum(w * (x - weighted_mean1) * (y - weighted_mean2)) / sum(w)
-    # Matrex.sum( Matrex.dot(xdy, w |> Matrex.transpose() ) ) / Matrex.sum(w)
     weighted_samples = w |> Matrex.multiply( Matrex.subtract(x, wm1)) |> Matrex.multiply( Matrex.subtract(y, wm2) )
     -1.0 * Matrex.sum(weighted_samples) / (1.0 - Matrex.sum(w |> Matrex.pow(2)))
   end
-
-  def weighted_covariance(xs, ys, weights) do
-    x = Matrex.new(xs)
-    y = Matrex.new(ys)
-    w = Matrex.new(weights)
-    weighted_covariance(x, y, w)
+  def weighted_covariance(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, :biased) do
+    wm1 = weighted_mean(x, w)
+    wm2 = weighted_mean(y, w)
+    weighted_samples = w |> Matrex.multiply( Matrex.subtract(x, wm1)) |> Matrex.multiply( Matrex.subtract(y, wm2) )
+    1.0 * Matrex.sum(weighted_samples) / Matrex.sum(w)
   end
 
   @doc """
