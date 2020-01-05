@@ -58,7 +58,7 @@ defmodule MatrexNumerix.LinearRegression do
   @spec r_squared(Common.vector(), Common.vector()) :: float
   def r_squared(predicted, actual) do
     predicted
-    |> Correlation.pearson(actual)
+    |> Correlation.pearson(actual |> Matrex.transpose())
     |> squared
   end
 

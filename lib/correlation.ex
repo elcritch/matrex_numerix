@@ -12,27 +12,26 @@ defmodule MatrexNumerix.Correlation do
   """
   @spec pearson(Common.vector(), Common.vector()) :: Common.maybe_float()
 
-  def pearson(
-        matrex_data(rows1, columns1, _data1, _first),
-        matrex_data(rows2, columns2, _data2, _second)
-      ) when rows1 != rows2 or columns1 != columns2,
-      do: raise %ArgumentError{message: "incorrect sizes"}
+  # def pearson(
+  #       matrex_data(rows1, columns1, _data1, _first),
+  #       matrex_data(rows2, columns2, _data2, _second)
+  #     ) when rows1 != rows2 or columns1 != columns2,
+  #     do: raise %ArgumentError{message: "incorrect sizes"}
 
   def pearson(x = %Matrex{}, y = %Matrex{}) do
     sum1 = sum(x)
     sum2 = sum(y)
     sum_of_squares1 = sum(pow(x, 2))
     sum_of_squares2 = sum(pow(y, 2))
-    sum_of_products = dot(x, y)
+    sum_of_products = dot(x, y) |> Matrex.trace()
 
-    size = Enum.count(x.items)
-    num = sum_of_products - sum1 * sum2 / size
+    size = 1.0*Enum.count(x)
+    num = sum_of_products - (sum1 * sum2 / size)
 
     density =
-      :math.sqrt(
-        (sum_of_squares1 - :math.pow(sum1, 2) / size) *
-          (sum_of_squares2 - :math.pow(sum2, 2) / size)
-      )
+      ((sum_of_squares1 - :math.pow(sum1, 2) / size) *
+        (sum_of_squares2 - :math.pow(sum2, 2) / size))
+      |> :math.sqrt()
 
     case density do
       0.0 -> 0.0

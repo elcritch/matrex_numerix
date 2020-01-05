@@ -10,7 +10,7 @@ defmodule ListHelper do
   end
 
   def equalize_length(xs, ys) do
-    min_length = Enum.min([length(xs), length(ys)])
+    min_length = Enum.min([Enum.count(xs), Enum.count(ys)])
     {Enum.take(xs, min_length), Enum.take(ys, min_length)}
   end
 

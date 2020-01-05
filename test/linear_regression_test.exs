@@ -23,17 +23,17 @@ defmodule MatrexNumerix.LinearRegressionTest do
     predictors = [1, 2.3, 3.1, 4.8, 5.6, 6.3] |> Matrex.from_list()
     responses = [2.6, 2.8, 3.1, 4.7, 5.1, 5.3] |> Matrex.from_list()
 
-    assert predict(3.5, predictors, responses) == 3.7288688355893296
+    assert abs(predict(3.5, predictors, responses) - 3.7288688355893296) < 1.0e4
   end
 
   test "R^2 is between 0 and 1" do
     data = [
-      {Matrex.rand(4,1), Matrex.rand(4,1)},
-      {Matrex.rand(10,1), Matrex.rand(10,1)},
+      {Matrex.random(4,1), Matrex.random(4,1)},
+      {Matrex.random(10,1), Matrex.random(10,1)},
     ]
 
     for {xs, ys} <- data do
-      {xs, ys} = equalize_length(xs, ys)
+      # {xs, ys} = equalize_length(xs, ys)
 
       r_squared(xs, ys) |> between?(0, 1)
     end
@@ -53,11 +53,11 @@ defmodule MatrexNumerix.LinearRegressionTest do
 
   test "R^2 is symmetric" do
     data = [
-      {Matrex.rand(4,1), Matrex.rand(4,1)},
-      {Matrex.rand(10,1), Matrex.rand(10,1)},
+      {Matrex.random(4,1), Matrex.random(4,1)},
+      {Matrex.random(10,1), Matrex.random(10,1)},
     ]
     for {xs, ys} <- data do
-      {xs, ys} = equalize_length(xs, ys)
+      # {xs, ys} = equalize_length(xs, ys)
 
       r_squared(xs, ys) == r_squared(ys, xs)
     end
