@@ -14,7 +14,7 @@ defmodule MatrexNumerix.DistanceTest do
     # for_all xs in non_empty(list(number())) do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
 
-    for xs < numbers do
+    for xs <- numbers do
       Distance.mse(xs, xs) == 0
     end
   end

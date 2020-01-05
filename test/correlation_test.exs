@@ -18,7 +18,7 @@ defmodule MatrexNumerix.CorrelationTest do
     # for_all {x, len} in {int(), pos_integer()} do
     numbers = [ {34, Matrex.random(4, 1)}, {74092, Matrex.random(10, 1)} ]
 
-    for {x, len} <- data do
+    for {x, len} <- numbers  do
       xs = [x] |> Stream.cycle() |> Enum.take(len)
 
       Correlation.pearson(xs, xs) == 0.0
@@ -28,17 +28,16 @@ defmodule MatrexNumerix.CorrelationTest do
   test "pearson correlation is one when the vectors are equal and variance is not zero" do
     # for_all xs in non_empty(list(int())) do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
-    for xs <- data do
-      implies length(xs) > 1 and xs == Enum.uniq(xs) do
-        Correlation.pearson(xs, xs) == 1.0
-      end
+    for xs <- numbers do
+      xs = xs |> Enum.uniq() |> Matrex.from_list()
+      Correlation.pearson(xs, xs) == 1.0
     end
   end
 
   test "pearson correlation is between -1 and 1" do
     # for_all {xs, ys} in {non_empty(list(int())), non_empty(list(int()))} do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
-    for {xs, ys} <- data do
+    for {xs, ys} <- numbers do
       {xs, ys} = equalize_length(xs, ys)
 
       Correlation.pearson(xs, ys) |> between?(-1, 1)

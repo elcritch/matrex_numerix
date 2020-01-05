@@ -4,7 +4,6 @@ defmodule MatrexNumerix.LinearRegressionTest do
   import ListHelper
   import MatrexNumerix.LinearRegression
 
-
   # test "least square fit is nil when the vectors aren't the same size" do
     # refute fit([1, 2, 3], [4, 5])
   # end

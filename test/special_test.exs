@@ -28,10 +28,7 @@ defmodule MatrexNumerix.SpecialTest do
   end
 
   test "logistic is the inverse of logit" do
-    numbers = [
-      Enum.random(1..1_000),
-      Enum.random(1..1_000),
-    ]
+    data = [ Enum.random(1..1_000), Enum.random(1..1_000), ]
 
     # for_all x in int(0, 1000) do
     for x <- data do

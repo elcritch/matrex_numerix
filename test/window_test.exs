@@ -1,6 +1,5 @@
 defmodule MatrexNumerix.WindowTest do
   use ExUnit.Case, async: true
-  use ExCheck
 
   import ListHelper
 
@@ -18,8 +17,11 @@ defmodule MatrexNumerix.WindowTest do
     end)
   end
 
-  property "gaussian is between 0 and 1" do
-    for_all {width, sigma} in {number(), non_neg_integer()} do
+  test "gaussian is between 0 and 1" do
+    numbers = [ {:random.uniform(), Enum.random(1..1_000)},
+                {:random.uniform(), Enum.random(1..1_000)} ]
+    # for_all {width, sigma} in {number(), non_neg_integer()} do
+    for {width, sigma} <- numbers do
       sigma = sigma / 100
 
       Window.gaussian(width, sigma) |> between?(0, 1)
