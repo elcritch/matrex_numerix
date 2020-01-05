@@ -39,7 +39,8 @@ defmodule MatrexNumerix.StatisticsTest do
     for {x, xs} <- numbers do
       frequent = [x]
       frequent_list = frequent |> Stream.cycle() |> Enum.take(Enum.count(xs) + 1)
-      xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Matrex.from_list() |> Statistics.mode() == frequent
+      val = xs |> Enum.concat(frequent_list) |> Enum.shuffle() |> Matrex.from_list() |> Statistics.mode()
+      assert val == frequent
     end
   end
 
