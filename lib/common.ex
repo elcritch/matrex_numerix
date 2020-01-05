@@ -26,5 +26,5 @@ defmodule MatrexNumerix.Common do
   @typedoc """
   Something that may be a vector.
   """
-  @type maybe_vector :: vector | nil
+  @type maybe_vector :: %Matrex{} | no_return()
 end

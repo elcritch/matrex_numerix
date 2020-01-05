@@ -16,7 +16,7 @@ defmodule MatrexNumerix.LinearRegression do
   where `x` is the predictor and `y` the response.
   Returns a tuple containing the intercept `a` and slope `b`.
   """
-  @spec fit(Matrex.t(), Matrex.t()) :: {float, float}
+  @spec fit( %Matrex{}, %Matrex{} ) :: {float, float} | no_return()
 
   def fit(
         matrex_data(rows1, columns1, _data1, _x),
@@ -24,10 +24,7 @@ defmodule MatrexNumerix.LinearRegression do
       ) when rows1 != rows2 or columns1 != columns2,
       do: raise %ArgumentError{message: "mismatched sizes"}
 
-  def fit(
-        matrex_data(rows1, columns1, _data1, x),
-        matrex_data(rows2, columns2, _data2, y)
-      ) when rows1 == rows2 and columns1 == columns2 do
+  def fit( %Matrex{} = x, %Matrex{} = y) do
 
     x_mean = mean(x)
     y_mean = mean(y)

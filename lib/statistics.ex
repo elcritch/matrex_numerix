@@ -9,7 +9,7 @@ defmodule MatrexNumerix.Statistics do
   @doc """
   The average of a list of numbers.
   """
-  @spec mean(Matrex.t()) :: Common.maybe_float()
+  @spec mean(Matrex.t()) :: float
 
   def mean(x = %Matrex{}) do
     Matrex.sum(x) / Enum.count(x)
@@ -38,7 +38,7 @@ defmodule MatrexNumerix.Statistics do
   @doc """
   The most frequent value(s) in a list.
   """
-  @spec mode(Matrex.t()) :: Common.maybe_vector()
+  @spec mode(Matrex.t()) :: Common.maybe_float()
 
   def mode(x = %Matrex{}) do
     counts =
@@ -57,11 +57,6 @@ defmodule MatrexNumerix.Statistics do
         |> Stream.filter(fn {_x, count} -> count == max_count end)
         |> Enum.map(fn {i, _count} -> i end)
     end
-  end
-
-  def mode(xs) do
-    x = Matrex.new(xs)
-    mode(x)
   end
 
   @doc """
@@ -83,6 +78,7 @@ defmodule MatrexNumerix.Statistics do
   The unbiased population variance from a sample.
   It measures how far the vector is spread out from the mean.
   """
+  @spec variance(Matrex.t()) :: Common.maybe_float()
 
   def variance(
         matrex_data(rows1, columns1, _data1, _first)
@@ -93,22 +89,12 @@ defmodule MatrexNumerix.Statistics do
     powered_deviations(x, 2) / (Enum.count(x) - 1)
   end
 
-  def variance(xs) do
-    x = Matrex.new(xs)
-    variance(x)
-  end
-
   @doc """
   The variance for a full population.
   It measures how far the vector is spread out from the mean.
   """
   @spec population_variance(Matrex.t()) :: Common.maybe_float()
   def population_variance(x = %Matrex{}), do: moment(x, 2)
-
-  def population_variance(xs) do
-    x = Matrex.new(xs)
-    population_variance(x)
-  end
 
   @doc """
   The unbiased standard deviation from a sample.
@@ -122,42 +108,28 @@ defmodule MatrexNumerix.Statistics do
 
   def std_dev(x = %Matrex{}), do: :math.sqrt(variance(x))
 
-  def std_dev(xs) do
-    x = Matrex.from_list(xs)
-    std_dev(x)
-  end
-
   @doc """
   The standard deviation for a full population.
   It measures the amount of variation of the vector.
   """
-  @spec population_std_dev(Matrex.t()) :: Common.maybe_float()
+  @spec population_std_dev(Matrex.t()) :: float
   def population_std_dev(x = %Matrex{}), do: :math.sqrt(population_variance(x))
-
-  def population_std_dev(xs) do
-    x = Matrex.new(xs)
-    population_std_dev(x)
-  end
 
   @doc """
   The nth moment about the mean for a sample.
   Used to calculate skewness and kurtosis.
   """
-  @spec moment(Matrex.t(), pos_integer) :: Common.maybe_float()
+  @spec moment(Matrex.t(), pos_integer) :: float
   def moment(_, 1), do: 0.0
   def moment(x = %Matrex{}, n), do: powered_deviations(x, n) / Enum.count(x)
 
-  def moment(xs, n) do
-    x = Matrex.new(xs)
-    moment(x, n)
-  end
 
   @doc """
   The sharpness of the peak of a frequency-distribution curve.
   It defines the extent to which a distribution differs from a normal distribution.
   Like skewness, it describes the shape of a probability distribution.
   """
-  @spec kurtosis(Matrex.t()) :: Common.maybe_float()
+  @spec kurtosis(Matrex.t()) :: float
   def kurtosis(x = %Matrex{}), do: moment(x, 4) / :math.pow(population_variance(x), 2) - 3
 
 
@@ -166,7 +138,7 @@ defmodule MatrexNumerix.Statistics do
   It defines the extent to which a distribution differs from a normal distribution.
   Like kurtosis, it describes the shape of a probability distribution.
   """
-  @spec skewness(Matrex.t()) :: Common.maybe_float()
+  @spec skewness(Matrex.t()) :: float
   def skewness(x = %Matrex{}), do: moment(x, 3) / :math.pow(population_variance(x), 1.5)
 
 
@@ -294,6 +266,7 @@ defmodule MatrexNumerix.Statistics do
     Matrex.sum(x |> Matrex.dot_nt(w)) / Matrex.sum(w)
   end
 
+  @spec powered_deviations(Matrex.t(), number) :: float
   def powered_deviations(x, n) do
     x_mean = mean(x)
     Matrex.sum(Matrex.pow(x |> Matrex.subtract(x_mean), n))
