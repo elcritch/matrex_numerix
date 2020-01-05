@@ -27,7 +27,7 @@ defmodule MatrexNumerix.DistanceTest do
     for {xs, ys} <- data do
 
       if xs != ys do
-        Distance.mse(xs, ys) != 0
+        assert Distance.mse(xs, ys) != 0
       end
     end
   end
@@ -42,7 +42,7 @@ defmodule MatrexNumerix.DistanceTest do
     # for_all xs in non_empty(list(number())) do
     data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- data do
-      Distance.rmse(xs, xs) == 0
+      assert Distance.rmse(xs, xs) == 0
     end
   end
 
@@ -53,7 +53,7 @@ defmodule MatrexNumerix.DistanceTest do
     for {xs, ys} <- data do
 
       if xs != ys do
-        Distance.rmse(xs, ys) != 0
+        assert Distance.rmse(xs, ys) != 0
       end
     end
   end
@@ -63,7 +63,7 @@ defmodule MatrexNumerix.DistanceTest do
     data = [ {Matrex.random(1, 4), Matrex.random(1, 4)}, {Matrex.random(1, 10), Matrex.random(1, 10)}, ]
     for {xs, ys} <- data do
 
-      Distance.pearson(xs, ys) == 1.0 - Correlation.pearson(xs, ys)
+      assert Distance.pearson(xs, ys) == 1.0 - Correlation.pearson(xs, ys)
     end
   end
 
@@ -80,7 +80,7 @@ defmodule MatrexNumerix.DistanceTest do
     # for_all xs in non_empty(list(number())) do
     data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- data do
-      Distance.minkowski(xs, xs) == 0
+      assert Distance.minkowski(xs, xs) == 0
     end
   end
 
@@ -103,7 +103,7 @@ defmodule MatrexNumerix.DistanceTest do
     # for_all xs in non_empty(list(number())) do
     data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- data do
-      Distance.euclidean(xs, xs) == 0
+      assert Distance.euclidean(xs, xs) == 0
     end
   end
 

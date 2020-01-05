@@ -55,7 +55,7 @@ defmodule MatrexNumerix.LinearRegressionTest do
     ]
 
     for {xs, ys} <- data do
-      r_squared(xs, ys) == r_squared(ys, xs)
+      assert r_squared(xs, ys) == r_squared(ys, xs)
     end
   end
 

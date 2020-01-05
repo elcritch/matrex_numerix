@@ -36,7 +36,7 @@ defmodule MatrexNumerix.SpecialTest do
       logit = Special.logit(p)
 
       if is_atom(logit) do
-        Special.logistic(logit) == p
+        assert Special.logistic(logit) == p
       else
         assert_in_delta(Special.logistic(logit), p, 0.001)
       end
