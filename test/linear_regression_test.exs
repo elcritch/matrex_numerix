@@ -27,13 +27,11 @@ defmodule MatrexNumerix.LinearRegressionTest do
 
   test "R^2 is between 0 and 1" do
     data = [
-      {Matrex.random(4,1), Matrex.random(4,1)},
-      {Matrex.random(10,1), Matrex.random(10,1)},
+      {Matrex.random(1,4), Matrex.random(1,4)},
+      {Matrex.random(1,10), Matrex.random(1,10)},
     ]
 
     for {xs, ys} <- data do
-      # {xs, ys} = equalize_length(xs, ys)
-
       r_squared(xs, ys) |> between?(0, 1)
     end
   end
@@ -52,12 +50,11 @@ defmodule MatrexNumerix.LinearRegressionTest do
 
   test "R^2 is symmetric" do
     data = [
-      {Matrex.random(4,1), Matrex.random(4,1)},
-      {Matrex.random(10,1), Matrex.random(10,1)},
+      {Matrex.random(1,4), Matrex.random(1,4)},
+      {Matrex.random(1,10), Matrex.random(1,10)},
     ]
-    for {xs, ys} <- data do
-      # {xs, ys} = equalize_length(xs, ys)
 
+    for {xs, ys} <- data do
       r_squared(xs, ys) == r_squared(ys, xs)
     end
   end
