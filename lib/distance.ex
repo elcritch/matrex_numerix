@@ -4,6 +4,7 @@ defmodule MatrexNumerix.Distance do
   """
 
   import Matrex
+  import Matrex.Guards
 
   import MatrexNumerix.LinearAlgebra
 
@@ -79,12 +80,6 @@ defmodule MatrexNumerix.Distance do
     l1_norm(x |> Matrex.subtract(y) )
   end
 
-  def manhattan(vector1, vector2) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    manhattan(x, y)
-  end
-
   @doc """
   The Jaccard distance (1 - Jaccard index) between two vectors.
   """
@@ -95,6 +90,11 @@ defmodule MatrexNumerix.Distance do
   # def jaccard([], []), do: 0.0
   # def jaccard([], _), do: nil
   # def jaccard(_, []), do: nil
+  def jaccard(
+        matrex_data(rows1, columns1, _data1, _first),
+        matrex_data(rows2, columns2, _data2, _second)
+      ) when rows1 != rows2 or columns1 != columns2,
+      do: raise %ArgumentError{message: "incorrect sizes"}
 
   def jaccard(vector1, vector2) do
     vector1

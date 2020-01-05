@@ -23,7 +23,7 @@ defmodule MatrexNumerix.Correlation do
     sum2 = sum(y)
     sum_of_squares1 = sum(pow(x, 2))
     sum_of_squares2 = sum(pow(y, 2))
-    sum_of_products = dot(x, y) |> Matrex.trace()
+    sum_of_products = dot(x, y |> Matrex.transpose()) |> Matrex.sum()
 
     size = 1.0*Enum.count(x)
     num = sum_of_products - (sum1 * sum2 / size)

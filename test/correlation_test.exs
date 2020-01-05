@@ -66,6 +66,6 @@ defmodule MatrexNumerix.CorrelationTest do
     weighted_correlation = Correlation.pearson(vector1, vector2, weights)
     unweighted_correlation = Correlation.pearson(vector1, vector2)
 
-    assert_in_delta(weighted_correlation, unweighted_correlation, 0.0000000001)
+    assert_in_delta(weighted_correlation, unweighted_correlation, 1.0e-9)
   end
 end
