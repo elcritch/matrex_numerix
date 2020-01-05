@@ -119,7 +119,7 @@ defmodule MatrexNumerix.DistanceTest do
     # for_all xs in non_empty(list(number())) do
     data = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
     for xs <- data do
-      Distance.manhattan(xs, xs) == 0
+      assert Distance.manhattan(xs, xs) == 0
     end
   end
 
