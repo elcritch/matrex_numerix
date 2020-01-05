@@ -51,16 +51,20 @@ defmodule MatrexNumerix.StatisticsTest do
     #           when x_ < y_
     #         ) do
     for {x, y, xs} <- numbers do
-      frequent_set = [x, y]
+      frequent_set = [x, y] |> Matrex.from_list()
       frequent_list = frequent_set |> Stream.cycle() |> Enum.take(2 * (Enum.count(xs) + 1))
 
-      xs
-      |> Enum.reject(&Enum.member?(frequent_set, &1))
-      |> Enum.concat(frequent_list)
-      |> Enum.shuffle()
-      |> Matrex.from_list()
-      |> Statistics.mode()
-      |> Enum.sort() == frequent_set
+      val =
+        xs
+        |> Enum.reject(&Enum.member?(frequent_set, &1))
+        |> Enum.concat(frequent_list)
+        |> Enum.shuffle()
+        |> Matrex.from_list()
+        |> Statistics.mode()
+        |> Enum.sort()
+        |> Matrex.from_list()
+
+       assert val |> Matrex.subtract(frequent_set) |> Matrex.sum() < 1.0e-6
     end
   end
 

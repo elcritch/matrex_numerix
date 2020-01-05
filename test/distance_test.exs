@@ -15,7 +15,7 @@ defmodule MatrexNumerix.DistanceTest do
     numbers = [ Matrex.random(4, 1), Matrex.random(10, 1) ]
 
     for xs <- numbers do
-      Distance.mse(xs, xs) == 0
+      assert Distance.mse(xs, xs) == 0
     end
   end
 
