@@ -104,7 +104,7 @@ NOTE: Parallelization can only get you so far. In terms of raw speed, a pure Eli
 
 ### Optimization
 
-* ~~~Genetic algorithms~~~ +not ported yet
+* ~~Genetic algorithms~~ (not ported yet)
 
 ### Neural network activation functions
 
