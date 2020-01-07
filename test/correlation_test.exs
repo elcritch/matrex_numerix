@@ -63,12 +63,12 @@ defmodule MatrexNumerix.CorrelationTest do
     # for {v1,v2,w} <- Enum.zip([vector1 |> Enum.to_list(), vector2 |> Enum.to_list(), weights |> Enum.to_list()]), into: [] do
       # IO.puts "#{v1}, #{v2}, #{w}"
     # end
-    IO.puts("\n")
+    # IO.puts("\n")
 
     weighted_correlation = Correlation.pearson(vector1, vector2, weights) # |> IO.inspect(label: :weighted_corr)
     unweighted_correlation = Correlation.pearson(vector1, vector2) # |> IO.inspect(label: :unweighted_corr)
 
-    IO.puts("\n")
+    # IO.puts("\n")
     assert_in_delta(weighted_correlation, unweighted_correlation, 1.0e-6)
   end
 end
