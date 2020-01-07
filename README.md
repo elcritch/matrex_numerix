@@ -14,11 +14,11 @@ Add `numerix` to your list of dependencies in `mix.exs`:
   end
 ```
 
-Ensure `numerix` and its dependencies are started before your application:
+Start `matrex_numerix` and its dependencies if you plan to use `gen_stage` or `flow`:
 
 ```elixir
   def application do
-    [applications: [:numerix, :gen_stage, :flow]]
+    [applications: [:matrex_numerix, :gen_stage, :flow]]
   end
 ```
 
@@ -104,7 +104,7 @@ NOTE: Parallelization can only get you so far. In terms of raw speed, a pure Eli
 
 ### Optimization
 
-* Genetic algorithms
+* ~~~Genetic algorithms~~~ [not ported yet]
 
 ### Neural network activation functions
 
