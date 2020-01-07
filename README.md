@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/safwank/Numerix.svg?branch=master)](https://travis-ci.org/safwank/Numerix)
 
-# Numerix
+# MatrexNumerix
 
 This is a port of the majority of `Numerix` to utilize the [Matrex](https://github.com/versilov/matrex/) library. This library is a collection of useful mathematical functions in Elixir with a slant towards statistics, linear algebra and machine learning.
 
@@ -10,7 +10,7 @@ Add `numerix` to your list of dependencies in `mix.exs`:
 
 ```elixir
   def deps do
-    [{:numerix, "~> 0.5"}]
+    [{:matrex_numerix, "~> 0.6", github: "elcritch/matrex_numerix"}]
   end
 ```
 
