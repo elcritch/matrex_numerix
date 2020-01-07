@@ -2,7 +2,7 @@
 
 # Numerix
 
-A collection of useful mathematical functions in Elixir with a slant towards statistics, linear algebra and machine learning.
+This is a port of the majority of `Numerix` to utilize the [Matrex](https://github.com/versilov/matrex/) library. This library is a collection of useful mathematical functions in Elixir with a slant towards statistics, linear algebra and machine learning.
 
 ## Installation
 
