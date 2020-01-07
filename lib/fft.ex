@@ -15,16 +15,25 @@ defmodule MatrexNumerix.Fft do
    - a tuple of two lists of floats - outreal and outimag, each of length n.
   """
 
-  import Matrex
   import Matrex.Guards
-  alias MatrexNumerix.Math
 
-  def compute_dft(vector_data(columns1, _body1) = x) do
-    Matrex.concat(x, Matrex.zeros(1, columns1), :rows)
-    |> compute_dft_full()
+  def compute_dft_freq_and_amplitude(
+        vector_data(columns1, _body1) = x,
+        vector_data(columns2, _body2) = y
+      ) when columns1 == columns2 do
+    sampling_interval = x[2] - x[1] # calculate sampling interval
+
+    Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
+    |> compute_dft_complex()
+    |> to_freq_and_amplitude(sampling_interval)
   end
 
-  def compute_dft_full(xx) do
+  def compute_dft(vector_data(columns1, _body1) = y) do
+    Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
+    |> compute_dft_complex()
+  end
+
+  def compute_dft_complex(xx) do
     {2, nn} = xx |> Matrex.size()
 
     # IO.inspect(xx, label: :xx)
