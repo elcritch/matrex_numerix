@@ -3,37 +3,41 @@ defmodule MatrexNumerix.Fft do
   Computes the discrete Fourier transform (DFT) of the given complex vector.
   """
 
-
-  @doc """
-
-  Computes the discrete Fourier transform (DFT) of the given complex vector.
-
-    - `rX` real input
-    - `rC` imaginary input
-
-  Returns:
-   - a tuple of two lists of floats - outreal and outimag, each of length n.
-  """
-
   import Matrex.Guards
 
-  def compute_dft_freq_and_amplitude(
+  def dft_freq_and_amplitude(
         vector_data(columns1, _body1) = x,
         vector_data(columns2, _body2) = y
       ) when columns1 == columns2 do
     sampling_interval = x[2] - x[1] # calculate sampling interval
 
     Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
-    |> compute_dft_complex()
+    |> dft_complex()
     |> to_freq_and_amplitude(sampling_interval)
   end
 
-  def compute_dft(vector_data(columns1, _body1) = y) do
+  @doc """
+  Computes the discrete Fourier transform (DFT) of the given real vector.
+
+    - `y` real and imaginary input
+
+  Returns:
+    - a matrix of real and imaginary fourier transform output
+  """
+  def dft_real(vector_data(columns1, _body1) = y) do
     Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
-    |> compute_dft_complex()
+    |> dft_complex()
   end
 
-  def compute_dft_complex(xx) do
+  @doc """
+  Computes the discrete Fourier transform (DFT) of the given complex vector.
+
+    - `xx` real and imaginary input
+
+  Returns:
+    - a matrix of real and imaginary fourier transform output
+  """
+  def dft_complex(xx) do
     {2, nn} = xx |> Matrex.size()
 
     # IO.inspect(xx, label: :xx)

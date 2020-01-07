@@ -12,7 +12,7 @@ defmodule MatrexNumerix.FftTest do
       :math.sin(40 * 2 * :math.pi * t) + 0.5 * :math.sin(90 * 2 * :math.pi * t)
     end)
 
-    fft = s |> MatrexNumerix.Fft.compute_dft()
+    fft = s |> MatrexNumerix.Fft.dft_real()
 
     # IO.inspect(t, label: :t)
     # IO.inspect(s, label: :s)
