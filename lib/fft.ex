@@ -78,10 +78,10 @@ defmodule MatrexNumerix.Fft do
     # ff = np.linspace(0, 1 / tt, nn)
 
     fft_amp =
-      Enum.map(1..nn, fn i -> fft |> Matrex.column_to_list(i) end)
+      (Enum.map(1..nn, fn i -> fft |> Matrex.column_to_list(i) end)
       |> Enum.map(fn [r,i] -> :math.sqrt( :math.pow(r,2) + :math.pow(i,2)) end)
       |> Matrex.from_list()
-      |> Matrex.divide(1.0*nn)
+      |> Matrex.divide(1.0*nn))[1..div(nn,2)]
 
     [frequency: ff, amplitude: fft_amp]
   end
