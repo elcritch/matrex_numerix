@@ -1,0 +1,28 @@
+defmodule MatrexNumerix.FftTest do
+  use ExUnit.Case, async: true
+
+
+  test "rbf is between 0 and 1" do
+    nn = 500
+    tt = nn / 0.5
+    t = Enum.to_list(1..nn) |> Matrex.from_list() |> Matrex.divide(tt) # np.linspace(0, 0.5, 500)
+    tt = t[2] - t[1]  # sampling interval
+
+    s = t |> Matrex.apply(fn t ->
+      :math.sin(40 * 2 * :math.pi * t) + 0.5 * :math.sin(90 * 2 * :math.pi * t)
+    end)
+
+    fft = s |> MatrexNumerix.Fft.compute_dft()
+
+    # IO.inspect(t, label: :t)
+    # IO.inspect(s, label: :s)
+    # IO.inspect(fft, label: :fft)
+
+    freq_amp =
+      fft
+      |> MatrexNumerix.Fft.to_freq_and_amplitude(tt)
+
+    # assert Matrex.max(freq_amp[:amplitude]) == 0.50
+    assert abs(Matrex.max(freq_amp[:amplitude]) - 0.5) < 1.0e-5
+  end
+end
