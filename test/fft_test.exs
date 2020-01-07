@@ -23,6 +23,8 @@ defmodule MatrexNumerix.FftTest do
       |> MatrexNumerix.Fft.to_freq_and_amplitude(tt)
 
     # assert Matrex.max(freq_amp[:amplitude]) == 0.50
+    # assert Matrex.max(freq_amp[:amplitude][32..250]) == 0.251
     assert abs(Matrex.max(freq_amp[:amplitude]) - 0.5) < 1.0e-5
+    assert abs(Matrex.max(freq_amp[:amplitude][32..250]) - 0.25) < 1.0e-5
   end
 end
