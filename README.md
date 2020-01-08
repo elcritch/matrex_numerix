@@ -92,6 +92,10 @@ NOTE: Parallelization can only get you so far. In terms of raw speed, a pure Eli
 * L2-norm
 * p-norm
 
+### Data Processing
+
+* FFT (DFT) for both real and complex values
+
 ### Linear regression
 
 * Least squares best fit
