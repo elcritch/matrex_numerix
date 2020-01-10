@@ -2,7 +2,7 @@ defmodule MatrexNumerix.FftTest do
   use ExUnit.Case, async: true
 
 
-  test "rbf is between 0 and 1" do
+  test "test fft produces accurate numbers" do
     nn = 500
     tt = nn / 0.5
     t = Enum.to_list(1..nn) |> Matrex.from_list() |> Matrex.divide(tt) # np.linspace(0, 0.5, 500)
