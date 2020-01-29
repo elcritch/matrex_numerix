@@ -82,6 +82,9 @@ defmodule MatrexNumerix.Distance do
   def manhattan(x = %Matrex{}, y = %Matrex{}) do
     l1_norm(x |> Matrex.subtract(y) )
   end
+  def manhattan(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
+    l1_norm(x |> Matrex.subtract(y), w)
+  end
 
   @doc """
   The Jaccard distance (1 - Jaccard index) between two vectors.
@@ -117,20 +120,27 @@ defmodule MatrexNumerix.Distance do
     |> to_jaccard_distance
   end
 
-  def convolution(%{distance: dm} = kernel,
-                  %Matrex{} = xx,
-                  vector_data(columns1, _data1, _first) = yy) do
-
+  def convolution(method, %Matrex{} = xx, %Matrex{} = yy, weights \\ nil) do
     {dimx, nobsx} = Matrex.size(xx)
     {dimy, nobsy} = Matrex.size(yy)
-    weights = Map.get(kernel,:weights, Matrex.ones(1,dimx))
+    weights = weights || Matrex.ones(dimx, 1)
     {dimw, nobsw} = Matrex.size(weights)
 
     (dimx == dimy == dimw) || %ArgumentError{message: "size(xx, 1) != size(yy, 1) != size(weights, 1)"}
 
+    dist_func =
+      case method do
+        :euclidian -> &euclidean/3
+        :manhattan -> &manhattan/3
+        :mse -> &mse/3
+        :rmse -> &rmse/3
+        :minkowski -> &minkowski/3
+        custom when is_function(custom) -> custom
+      end
+
     for i <- 1..nobsx, into: [] do
         for j <- 1..nobsy, into: [] do
-            MatrexNumerix.Distance.euclidean(xx |> Matrex.column(i), yy |> Matrex.column(j), weights)
+          dist_func.(xx |> Matrex.column(i), yy |> Matrex.column(j), weights)
         end
     end
     |> Matrex.new()
