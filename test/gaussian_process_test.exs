@@ -32,7 +32,7 @@ defmodule MatrexNumerix.GP do
       xx = x |> Matrex.transpose()
       yy = x |> Matrex.transpose()
 
-      dist = MatrexNumerix.Distance.convolution(:euclidian, xx, yy)
+      dist = MatrexNumerix.Distance.diff_conv(:euclidian, xx, yy)
 
       assert dist |> Matrex.subtract(dist_expected) |> Matrex.sum() < 1.0e-9
   end

@@ -114,13 +114,22 @@ defmodule MatrexNumerix.Distance do
     |> to_jaccard_distance
   end
 
-  def convolution(method, %Matrex{} = xx, %Matrex{} = yy, weights \\ nil) do
-    {dimx, nobsx} = Matrex.size(xx)
-    {dimy, nobsy} = Matrex.size(yy)
-    weights = weights || Matrex.ones(dimx, 1)
+  def diff_conv(method, x, y) do
+    w = Matrex.ones(x |> Matrex.size() |> elem(0), 1)
+    diff_conv(method, x, y, w)
+  end
+
+  def diff_conv(method,
+                vector_data(columns1, _data1, _first) = xx,
+                vector_data(columns2, _data2, _second) = yy,
+                weights) do
+
+    {1, nobsx} = Matrex.size(xx)
+    {1, nobsy} = Matrex.size(yy)
+    weights = weights || Matrex.ones(1, 1)
     {dimw, nobsw} = Matrex.size(weights)
 
-    (dimx == dimy == dimw) || %ArgumentError{message: "size(xx, 1) != size(yy, 1) != size(weights, 1)"}
+    (nobsx == nobsy == nobsw) || %ArgumentError{message: "nobs(xx) != nobs(yy) != nobs(weights)"}
 
     dist_func =
       case method do
@@ -138,6 +147,21 @@ defmodule MatrexNumerix.Distance do
         end
     end
     |> Matrex.new()
+  end
+
+  def diff_conv(method, %Matrex{} = xx, %Matrex{} = yy, weights) do
+
+    {dimx, nobsx} = Matrex.size(xx)
+    {dimy, nobsy} = Matrex.size(yy)
+    weights = weights || Matrex.ones(dimx, 1)
+    {dimw, nobsw} = Matrex.size(weights)
+
+    (dimx == dimy == dimw) || %ArgumentError{message: "size(xx, 1) != size(yy, 1) != size(weights, 1)"}
+    (nobsx == nobsy == nobsw) || %ArgumentError{message: "nobs(xx) != nobs(yy) != nobs(weights)"}
+
+    for idx <- 1..dimx do
+      {idx, diff_conv(method, xx[idx], yy[idx])}
+    end
   end
 
   defp to_jaccard_distance({intersection, union}) do
