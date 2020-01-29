@@ -38,7 +38,7 @@ defmodule MatrexNumerix.GP do
   end
 
   test "test distance ard" do
-    xx = Matrex.new("""
+    x = Matrex.new("""
         4.85461  4.54059  3.48487  2.22288   1.99412  2.14055  4.9729    0.188993
         5.17653  1.05561  4.38523  0.755642  3.45676  6.1361   0.859327  3.7586
       """)
@@ -76,7 +76,13 @@ defmodule MatrexNumerix.GP do
           2.01052    7.30616     0.39266    9.01776    0.091108   5.65248   8.40578    0.0
       """)
 
+      xx = x
+      yy = x
 
+      [dist1, dist2] = MatrexNumerix.Distance.diff_conv(:sq_euclidian, xx, yy)
+
+      assert dist1 |> Matrex.subtract(diff_expected1) |> Matrex.sum() < 1.0e-3
+      assert dist2 |> Matrex.subtract(diff_expected1) |> Matrex.sum() < 1.0e-3
   end
 
   test "test gp" do

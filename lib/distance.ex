@@ -69,10 +69,15 @@ defmodule MatrexNumerix.Distance do
     l2_norm(x |> Matrex.subtract(y), w)
   end
 
-  def euclidean(vector1, vector2) do
-    x = Matrex.new(vector1)
-    y = Matrex.new(vector2)
-    euclidean(x, y)
+  @doc """
+  The Euclidean distance between two vectors.
+  """
+  @spec sq_euclidean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
+  def sq_euclidean(x = %Matrex{}, y = %Matrex{}) do
+    l2_norm(x |> Matrex.subtract(y)) |> :math.pow(2)
+  end
+  def sq_euclidean(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
+    l2_norm(x |> Matrex.subtract(y), w) |> :math.pow(2)
   end
 
   @doc """
@@ -134,6 +139,7 @@ defmodule MatrexNumerix.Distance do
     dist_func =
       case method do
         :euclidian -> &euclidean/3
+        :sq_euclidian -> &sq_euclidean/3
         :manhattan -> &manhattan/3
         :mse -> &mse/3
         :rmse -> &rmse/3
@@ -160,7 +166,7 @@ defmodule MatrexNumerix.Distance do
     (nobsx == nobsy == nobsw) || %ArgumentError{message: "nobs(xx) != nobs(yy) != nobs(weights)"}
 
     for idx <- 1..dimx do
-      {idx, diff_conv(method, xx[idx], yy[idx])}
+      diff_conv(method, xx[idx], yy[idx])
     end
   end
 
