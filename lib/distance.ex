@@ -118,8 +118,8 @@ defmodule MatrexNumerix.Distance do
   end
 
   def convolution(%{distance: dm} = kernel,
-                   %Matrex{} = xx,
-                   vector_data(columns1, _data1, _first) = yy) do
+                  %Matrex{} = xx,
+                  vector_data(columns1, _data1, _first) = yy) do
 
     {dimx, nobsx} = Matrex.size(xx)
     {dimy, nobsy} = Matrex.size(yy)
