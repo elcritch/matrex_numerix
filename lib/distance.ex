@@ -19,6 +19,10 @@ defmodule MatrexNumerix.Distance do
     p = Matrex.pow(x |> Matrex.subtract(y), 2)
     Statistics.mean(p)
   end
+  def mse(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
+    p = Matrex.pow(x |> Matrex.subtract(y), 2)
+    Statistics.mean(p |> Matrex.dot(w))
+  end
 
 
   @doc """
@@ -31,16 +35,16 @@ defmodule MatrexNumerix.Distance do
   def rmse(vector1, vector2) do
     :math.sqrt(mse(vector1, vector2))
   end
+  def rmse(vector1, vector2, weights) do
+    :math.sqrt(mse(vector1, vector2, weights))
+  end
 
   @doc """
   The Pearson's distance between two vectors.
   """
   @spec pearson(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def pearson(vector1, vector2) do
-    case Correlation.pearson(vector1, vector2) do
-      # _ -> nil
-      correlation -> 1.0 - correlation
-    end
+    1.0 - Correlation.pearson(vector1, vector2)
   end
 
   @doc """
@@ -50,6 +54,9 @@ defmodule MatrexNumerix.Distance do
   def minkowski(x = %Matrex{}, y = %Matrex{}, p \\ 3) do
     norm(p, x |> Matrex.subtract(y))
   end
+  def minkowski(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, p) do
+    norm(p, x |> Matrex.subtract(y), Matrex.dot(w))
+  end
 
   @doc """
   The Euclidean distance between two vectors.
@@ -57,6 +64,9 @@ defmodule MatrexNumerix.Distance do
   @spec euclidean(Matrex.t(), Matrex.t()) :: Common.maybe_float()
   def euclidean(x = %Matrex{}, y = %Matrex{}) do
     l2_norm(x |> Matrex.subtract(y))
+  end
+  def euclidean(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}) do
+    l2_norm(x |> Matrex.subtract(y), w)
   end
 
   def euclidean(vector1, vector2) do
@@ -105,6 +115,24 @@ defmodule MatrexNumerix.Distance do
       end
     end)
     |> to_jaccard_distance
+  end
+
+  def distance(%{distance: dm}, xx = %Matrex{}, yy = %Matrex{}) do
+  end
+
+  def distance(%{distance: dm, weights: weights}, xx = %Matrex{}, yy = %Matrex{}) do
+    {dimx, nobsx} = Matrex.size(xx)
+    {dimy, nobsy} = Matrex.size(yy)
+    {dimw, nobsw} = Matrex.size(weights)
+
+    (dimx == dimy == dimw) || %ArgumentError{message: "size(xx, 1) != size(yy, 1) != size(weights, 1)"}
+
+    for i <- 1..nobsx, into: [] do
+        for j <- 1..nobsy, into: [] do
+            MatrexNumerix.Distance.euclidean(xx |> Matrex.column(i), yy |> Matrex.column(j))
+        end
+    end
+    |> Matrex.new()
   end
 
   defp to_jaccard_distance({intersection, union}) do
