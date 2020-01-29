@@ -4,17 +4,19 @@ defmodule MatrexNumerix.GP.Mat32Iso do
   """
   alias __MODULE__
   use Matrex.Operators
+  alias MatrexNumerix.GP.Kernel
+  alias MatrexNumerix.GP.IsotropicKernelData
+
+  def kern_dist(x1, x2), do: MatrexNumerix.GP.KernelData.isotropic(:euclidian, x1, x2)
 
   defstruct sigma2: 0.0, scale: 0.0
-
-  @type t :: %Mat32Iso{ sigma2: float, scale: float }
+  @type t :: %Mat32Iso{sigma2: float, scale: float}
 
   @sqrt3 :math.sqrt(3.0)
 
-  # In cov(mat, r) at /Users/elcritch/.julia/packages/GaussianProcesses/9jiDV/src/kernels/mat32_iso.jl:41
   def cov(mat = %Mat32Iso{}, r) when is_number(r) do
     s = @sqrt3 * r / mat.scale
-    mat.sigma2 * (1 + s) * :math.exp(-s)
+    mat.sigma2 * (1.0 + s) * :math.exp(-s)
   end
 
 end

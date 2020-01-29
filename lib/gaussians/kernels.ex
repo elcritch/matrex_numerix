@@ -1,16 +1,12 @@
 
-defmodule MatrexNumerix.GP.IsotropicKernelData do
-  defstruct [:rdata]
-end
-defmodule MatrexNumerix.GP.ArdKernelData do
-  defstruct [:data]
-end
+# defmodule MatrexNumerix.GP.ArdKernelData do
+  # defstruct [:data]
+# end
 
 defmodule MatrexNumerix.GP.Kernel do
   alias __MODULE__
   alias MatrexNumerix.Statistics
   alias MatrexNumerix.GP.KernelData
-  alias MatrexNumerix.GP.IsotropicKernelData
   use Matrex.Operators
 
   defstruct [:distance_method]
@@ -48,7 +44,7 @@ defmodule MatrexNumerix.GP.Kernel do
   #     wrap_cK(cK, sigma_buffer, chol)
   # end
 
-  def cov(cK = %Matrex{}, k = Kernel, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata) do
+  def cov(k = %{}, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata = %KernelData{}) do
       # if xx1 == xx2
         # cov(cK, k, xx1, data)
       # end
@@ -59,8 +55,6 @@ defmodule MatrexNumerix.GP.Kernel do
       (dim1==dim2) || throw(%ArgumentError{message: "xx1 and xx2 must have same dimension"})
 
       {dim, _} = size(xx1)
-
-      {nobs1, nobs2} == size(cK) || throw(%ArgumentError{message: "cK has size $(size(cK)) xx1 $(size(xx1)) and xx2 $(size(xx2))"})
 
       for i <- 1..nobs1, into: [] do
         for j <- 1..nobs2, into: [] do
@@ -92,8 +86,8 @@ defmodule MatrexNumerix.GP.Kernel do
   #     end
   # end
 
-  def cov_ij(kern, x1 = %Matrex{}, x2 = %Matrex{}, data = %IsotropicKernelData{}, i, j, dim) do
-      kern.__struct__.cov(kern, data.rdata[i][j])
+  def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %KernelData{}, i, j, dim) do
+      kmod.cov(kern, kdata.rdata[i][j])
   end
 
 end
