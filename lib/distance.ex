@@ -117,19 +117,20 @@ defmodule MatrexNumerix.Distance do
     |> to_jaccard_distance
   end
 
-  def distance(%{distance: dm}, xx = %Matrex{}, yy = %Matrex{}) do
-  end
+  def convolution(%{distance: dm} = kernel,
+                   %Matrex{} = xx,
+                   vector_data(columns1, _data1, _first) = yy) do
 
-  def distance(%{distance: dm, weights: weights}, xx = %Matrex{}, yy = %Matrex{}) do
     {dimx, nobsx} = Matrex.size(xx)
     {dimy, nobsy} = Matrex.size(yy)
+    weights = Map.get(kernel,:weights, Matrex.ones(1,dimx))
     {dimw, nobsw} = Matrex.size(weights)
 
     (dimx == dimy == dimw) || %ArgumentError{message: "size(xx, 1) != size(yy, 1) != size(weights, 1)"}
 
     for i <- 1..nobsx, into: [] do
         for j <- 1..nobsy, into: [] do
-            MatrexNumerix.Distance.euclidean(xx |> Matrex.column(i), yy |> Matrex.column(j))
+            MatrexNumerix.Distance.euclidean(xx |> Matrex.column(i), yy |> Matrex.column(j), weights)
         end
     end
     |> Matrex.new()
