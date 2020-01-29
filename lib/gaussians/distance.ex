@@ -15,11 +15,22 @@ defmodule MatrexNumerix.GP.Distance do
     # %KernelData{dists: distance(k, x1, x2)}
   end
 
-  def metric(k) do
+  def metric(k = %{distance: :euclidian}) do
     0.0
   end
 
-  def distance(k = %{}, xx = %Matrex{}, yy = %Matrex{}) do
+  def distance(%{distance: :euclidian}, xx = %Matrex{}, yy = %Matrex{}) do
+    {dimx, nobsx} = Matrex.size(xx)
+    {dimy, nobsy} = Matrex.size(yy)
+
+    dimx == dimy || %ArgumentError{message: "size(xx, 1) != size(yy, 1)"}
+
+    for i <- 1..nobsx, into: [] do
+        for j <- 1..nobsy, into: [] do
+            MatrexNumerix.Distance.euclidean(xx |> Matrex.column(i), yy |> Matrex.column(j))
+        end
+    end
+    |> Matrex.new()
   end
 
   # def distance(k = %{}, xx = %Matrex{}, yy = %Matrex{}) do
