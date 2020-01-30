@@ -25,16 +25,13 @@ defmodule MatrexNumerix.GP.Kernel do
   # end
 
 
-  # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
-  #     {dim, nobs} = size(x)
+  def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
+    {dim, nobs} = size(x)
+    sigma_buffer = cov(kernel, x, x, data)
+    noise = :math.exp(2*logNoise) + @eps
 
-  #     cK = Matrex.zeros(nobsx, nobsx)
+    sigma_buffer = sigma_buffer + Matrex.eye(nobs) * noise
 
-  #     sigma_buffer = cov(kernel, x, x, data)
-
-  #     noise = :math.exp(2*logNoise) + @eps
-
-  #     sigma_buffer = sigma_buffer + (Matrex.eye(nobs) * noise)
   #     # for i <- 1..nobs do
   #       # sigma_buffer[i,i] += noise
   #     # end
@@ -42,7 +39,7 @@ defmodule MatrexNumerix.GP.Kernel do
   #     sigma_buffer, chol = make_posdef!(sigma_buffer, cholfactors(cK))
 
   #     wrap_cK(cK, sigma_buffer, chol)
-  # end
+  end
 
   def cov(k = %{}, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata = %KernelData{}) do
       # if xx1 == xx2
