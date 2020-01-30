@@ -187,6 +187,12 @@ defmodule MatrexNumerix.GP do
     gpe! = MatrexNumerix.GP.Kernel.update_mll(gpe)
     IO.inspect(gpe!, label: :gpe!)
 
+    expected_y = Matrex.new """
+    -0.9672931901680022, -1.0070469610508248, -1.0903962829715461, 0.8811208605233783, -0.3332131916909575, -0.9769651482106089, 0.9159341732111771, 0.7362180710829012, 0.9508490881368652, -0.3064317818816142
+    """
+
+    assert gpe!.y == expected_y
+
     _x = """
     20] kerneldata:
       GaussianProcesses.IsotropicData{Array{Float64,2}}(
