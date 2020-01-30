@@ -107,12 +107,12 @@ defmodule MatrexNumerix.GP.Kernel do
             chol! = Matrex.cholesky(mm!) |> Matrex.transpose()
 
             unless chol! |> Matrex.sum() == :nan do
-              IO.inspect(:success, label: :chol_state)
+              # IO.inspect(:success, label: :chol_state)
               {mm!, chol!}
             else
               # that wasn't (numerically) positive definite,
               # so let's add some weight to the diagonal
-              IO.inspect(:fail, label: :chol_state)
+              # IO.inspect(:fail, label: :chol_state)
               diag_weight = 1.0e-6 * trace(m)/n * Matrew.eye(Matrex.size(m))
               {mm! + diag_weight, :none}
             end

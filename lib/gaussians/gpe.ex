@@ -3,6 +3,7 @@ defmodule MatrexNumerix.GPE do
   alias __MODULE__
   use Matrex.Operators
   alias MatrexNumerix.GPE
+  alias MatrexNumerix.GP
 
   @moduledoc """
   Linear regression functions.
@@ -40,14 +41,17 @@ defmodule MatrexNumerix.GPE do
     end
   end
 
-  def predictMVN(xpred, gpe = %GPE{xx: xtrain , y: ytrain, kern: kern, mean: %{__struct__: kmod} = mf, alpha: alpha, cK: cK}) do
+  def predictMVN(xpred, gpe = %GPE{xx: xtrain , y: ytrain, kern: kern = %{__struct__: kmod}, mean: mf, alpha: alpha, cK: cK}) do
     crossdata = kmod.kern_dist(xtrain, xpred)
     priordata = kmod.kern_dist(xpred, xpred)
     # crossdata = KernelData(kernel, xtrain, xpred)
     # priordata = KernelData(kernel, xpred, xpred)
 
-    kcross = GP.Kern.cov(kern, xtrain, xpred, crossdata)
-    kpred = GP.Kern.cov(kern, xpred, xpred, priordata)
+    IO.inspect(crossdata, label: :crossdata)
+    IO.inspect(priordata, label: :priordata)
+
+    kcross = GP.Kernel.cov(kern, xtrain, xpred, crossdata)
+    kpred = GP.Kernel.cov(kern, xpred, xpred, priordata)
     mx = GP.Mean.mean(mf, xpred)
     predictMVN!(kpred, cK, kcross, mx, alpha)
   end

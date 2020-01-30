@@ -191,17 +191,17 @@ defmodule MatrexNumerix.GP do
       0.3038644542413161 0.2023482953743353 0.4402486378151663 0.08060566333984757 0.9988524453406431 0.5223017924975333 0.37015590818116373 0.05277118436242623 0.280517364073899 0.500221349757034
     """
 
-    IO.inspect(chol, label: :chol)
-    IO.inspect(expected_chol, label: :expected_chol)
-    IO.inspect(expected_chol, label: :expected_chol)
-    IO.inspect(expected_chol_comb, label: :expected_chol_comb)
-    IO.inspect(chol_comb |> Matrex.subtract(expected_chol_comb), label: :diff_expected_chol_comb)
+    # IO.inspect(chol, label: :chol)
+    # IO.inspect(expected_chol, label: :expected_chol)
+    # IO.inspect(expected_chol, label: :expected_chol)
+    # IO.inspect(expected_chol_comb, label: :expected_chol_comb)
+    # IO.inspect(chol_comb |> Matrex.subtract(expected_chol_comb), label: :diff_expected_chol_comb)
 
     assert abs(chol |> Matrex.subtract(expected_chol) |> Matrex.sum()) < 1.0e-4
     assert abs(chol_comb |> Matrex.subtract(expected_chol_comb) |> Matrex.sum()) < 1.0e-4
 
     gpe! = MatrexNumerix.GP.Kernel.update_mll(gpe)
-    IO.inspect(gpe!, label: :gpe!)
+    # IO.inspect(gpe!, label: :gpe!)
 
     expected_y = Matrex.new """
     -0.9672931901680022, -1.0070469610508248, -1.0903962829715461, 0.8811208605233783, -0.3332131916909575, -0.9769651482106089, 0.9159341732111771, 0.7362180710829012, 0.9508490881368652, -0.3064317818816142
