@@ -4,14 +4,15 @@ defmodule MatrexNumerix.Fft do
   """
 
   import Matrex.Guards
+  alias Matrex.Vector
 
   def dft_freq_and_amplitude(
-        vector_data(columns1, _body1) = x,
-        vector_data(columns2, _body2) = y
-      ) when columns1 == columns2 do
+        vector_data(len1, _body1) = x,
+        vector_data(len2, _body2) = y
+      ) when len1 == len2 do
     sampling_interval = x[2] - x[1] # calculate sampling interval
 
-    Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
+    Matrex.concat(y, Vector.zeros(len1), :rows)
     |> dft_complex()
     |> to_freq_and_amplitude(sampling_interval)
   end
@@ -24,8 +25,8 @@ defmodule MatrexNumerix.Fft do
   Returns:
     - a matrix of real and imaginary fourier transform output
   """
-  def dft_real(vector_data(columns1, _body1) = y) do
-    Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
+  def dft_real(vector_data(len, _body1) = y) do
+    Matrex.concat(y, Vector.zeros(len), :rows)
     |> dft_complex()
   end
 
@@ -80,7 +81,7 @@ defmodule MatrexNumerix.Fft do
     fft_amp =
       (Enum.map(1..nn, fn i -> fft |> Matrex.column_to_list(i) end)
       |> Enum.map(fn [r,i] -> :math.sqrt( :math.pow(r,2) + :math.pow(i,2)) end)
-      |> Matrex.from_list()
+      |> Vector.new()
       |> Matrex.divide(1.0*nn))[1..div(nn,2)]
 
     [frequency: ff, amplitude: fft_amp]

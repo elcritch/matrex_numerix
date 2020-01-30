@@ -73,14 +73,14 @@ defmodule MatrexNumerix.LinearAlgebra do
   def backward_substitution(uu, y) do
     use Matrex.Operators
     {_, n} = size(uu)
-    x = zeros(size(y))
+    x = Vector.zeros(Vector.size(y))
 
     for i <- n..1, reduce: x do # loop over the rows from bottom to top
       x ->
         r = for k <- (i+1)..n |> Enum.reject(& &1 > n), reduce: y[i] do
               r -> r - uu[i][k] * x[k]
             end
-        set(x, i, 1, r / uu[i][i] )
+        Vector.set(x, i, r / uu[i][i] )
     end
   end
 
@@ -90,7 +90,7 @@ defmodule MatrexNumerix.LinearAlgebra do
   def forward_substitution(ll, b) do
     use Matrex.Operators
     {_ni, n} = size(ll)
-    c = zeros(size(b))
+    c = Vector.zeros(Vector.size(b))
 
     for i <- 1..n, reduce: c do
       c ->
@@ -99,7 +99,7 @@ defmodule MatrexNumerix.LinearAlgebra do
                 r - ll[i][j] * c[j]
             end
 
-        set(c, i, 1, r / ll[i][i] )
+        Vector.set(c, i, r / ll[i][i] )
     end
   end
 

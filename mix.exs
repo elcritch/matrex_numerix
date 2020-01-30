@@ -27,7 +27,7 @@ defmodule MatrexNumerix.Mixfile do
 
   def deps do
     [
-      {:matrex, "~> 0.6.9", github: "elcritch/matrex", branch: "master"},
+      {:matrex, "~> 0.6.10", github: "elcritch/matrex", branch: "master"},
       {:ex_doc, "~> 0.18", only: :dev},
       {:earmark, "~> 1.2", only: :dev}
     ]
