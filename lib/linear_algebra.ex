@@ -67,6 +67,9 @@ defmodule MatrexNumerix.LinearAlgebra do
     m |> Enum.reverse() |> Matrex.from_list() |> Matrex.transpose()
   end
 
+  @doc """
+  Solve Uppder Right triangular matrix (symmetric).
+  """
   def backward_substitution(uu, y) do
     use Matrex.Operators
     # backward substitution to solve for y = Ux
@@ -83,27 +86,6 @@ defmodule MatrexNumerix.LinearAlgebra do
     end
   end
 
-  # def backward_substitution(u, y) do
-  #   use Matrex.Operators
-
-  #   {_ni, n} = size(u)
-  #   x = zeros(size(u)) |> set(1, n, y[n] / u[n][n])
-
-  #   for i <- (n-1)..1, reduce: x do
-  #     x ->
-  #       s = y[i]
-
-  #       s =
-  #         for j <- n..(i+1), reduce: s do
-  #           s ->
-  #             s - u[i][j] * x[j]
-  #         end
-
-  #       x |> Matrex.set(1, i, s / u[i][i] )
-  #   end
-  #   |> Matrex.transpose()
-  # end
-
       # # forward substitution to solve for Ly = B
       # y = np.zeros(B.size)
       # for m, b in enumerate(B.flatten()):
@@ -114,34 +96,54 @@ defmodule MatrexNumerix.LinearAlgebra do
       #             y[m] -= y[n] * pl[m,n]
       #     y[m] /= pl[m, m]
 
-  def forward_substitution(l, b) do
+  def forward_substitution(ll, b) do
     use Matrex.Operators
 
-    {_ni, n} = size(l)
+    {_ni, n} = size(ll)
+    c = zeros(size(b))
 
-    y = Matrex.zeros(1,n) |> Matrex.set(1, 1, b[1])
+    for i <- 1..n, reduce: c do
+      c ->
+        IO.puts("c[#{i}] = b[#{i}]")
+        r = for j <- 1..(i-1) |> Enum.reject(& &1 < 1), reduce: b[i] do
+              r ->
+                r - ll[i][j] * c[j]
+            end
 
-    # Y(1) = B(1)
-    # DO  I = 2, N-1
-    #   S = B(I)
-    #   DO  J = 1, I-1
-    #     S = S - DPROD(L(I,J), Y(J))
-    #   END DO
-    # END DO
-
-    for i <- 2..n, reduce: y do
-      y ->
-        s = b[i]
-
-        s =
-          for j <- 1..(i-1), reduce: s do
-            s ->
-              s - l[i][j] * y[j]
-          end
-
-        y |> Matrex.set(1, i, s / l[i][i] )
+        c = set(c, i, 1, r / ll[i][i] )
+        IO.puts(" = #{ c[i] }")
+        c
     end
-    |> Matrex.transpose()
   end
+
+  # def forward_substitution(l, b) do
+  #   use Matrex.Operators
+
+  #   {_ni, n} = size(l)
+
+  #   y = Matrex.zeros(1,n) |> Matrex.set(1, 1, b[1])
+
+  #   # Y(1) = B(1)
+  #   # DO  I = 2, N-1
+  #   #   S = B(I)
+  #   #   DO  J = 1, I-1
+  #   #     S = S - DPROD(L(I,J), Y(J))
+  #   #   END DO
+  #   # END DO
+
+  #   for i <- 2..n, reduce: y do
+  #     y ->
+  #       s = b[i]
+
+  #       s =
+  #         for j <- 1..(i-1), reduce: s do
+  #           s ->
+  #             s - l[i][j] * y[j]
+  #         end
+
+  #       y |> Matrex.set(1, i, s / l[i][i] )
+  #   end
+  #   |> Matrex.transpose()
+  # end
 
 end
