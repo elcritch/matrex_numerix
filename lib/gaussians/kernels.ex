@@ -25,7 +25,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
-    %{ gpe | y: y, alpha: alpha }
+    %{ gpe | y: y, alpha: alpha, cK: [u: chol_upper, l: chol_lower] }
   end
 
   # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
@@ -57,40 +57,34 @@ defmodule MatrexNumerix.GP.Kernel do
 
       (dim1==dim2) || throw(%ArgumentError{message: "xx1 and xx2 must have same dimension"})
 
+      IO.inspect([nobs1: nobs1, nobs2: nobs2], label: :COV_NOBS)
+
       {dim, _} = size(xx1)
 
       for i <- 1..nobs1, into: [] do
         for j <- 1..nobs2, into: [] do
           # cK[i,j] = cov_ij(k, xx1, xx2, data, i, j, dim)
+          IO.inspect({i, j, dim}, label: COV_DIMS)
+          IO.inspect({k, xx1, xx2, kdata}, label: COVS)
           cov_ij(k, xx1, xx2, kdata, i, j, dim)
         end
       end
       |> Matrex.new()
   end
 
-  # def cov_sym(cK = AbstractMatrix, k = Kernel, xx = AbstractMatrix, kdata) do
-  #     {dim, nobs} = size(xx)
-
-  #     {nobs, nobs} == size(cK) || throw(%ArgumentError{message: "cK has size $(size(cK)) and xx has size $(size(xx))"})
-
-  #     # for j <- 1..nobs do
-  #     #     cK[j,j] = cov_ij(k, xx, xx, kdata, j, j, dim)
-  #     #     for i <- 1..j-1 do
-  #     #         cK[i,j] = cov_ij(k, xx, xx, kdata, i, j, dim)
-  #     #         cK[j,i] = cK[i,j]
-  #     #     end
-  #     # end
-  #     for j <- 1..nobs do
-  #         cK[j,j] = cov_ij(k, xx, xx, kdata, j, j, dim)
-  #         for i <- 1..j-1 do
-  #             cK[i,j] = cov_ij(k, xx, xx, kdata, i, j, dim)
-  #             cK[j,i] = cK[i,j]
-  #         end
-  #     end
-  # end
-
   def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %GP.KernelData{}, i, j, dim) do
-      kmod.cov(kern, kdata.rdata[i][j])
+      IO.inspect(kdata.rdata, label: COV_IJ_RDATA)
+      IO.inspect({i,j}, label: COV_IJ_RDATA_IJ_IDX)
+      # IO.inspect(kdata.rdata |> get(i,j), label: COV_IJ_RDATA_IJ)
+      # kmod.cov(kern, kdata.rdata |> get(i,j))
+      case kdata.rdata |> size() do
+        {_, 1} ->
+          kmod.cov(kern, kdata.rdata[j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+        {1, _} ->
+          kmod.cov(kern, kdata.rdata[j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+        {_, _} ->
+          kmod.cov(kern, kdata.rdata[i][j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+      end
   end
 
   def make_posdef!(mm = %Matrex{}) do

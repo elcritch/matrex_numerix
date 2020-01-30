@@ -299,7 +299,7 @@ defmodule MatrexNumerix.GP do
       5.155641852513163, -0.9351499914157426
     """
 
-    xx = expected_predict |> Matrex.column(1) |> Matrex.transpose()
+    xx = expected_predict |> Matrex.column(1) |> Matrex.submatrix(1..1, 1..1) |> Matrex.transpose()
     yy = expected_predict |> Matrex.column(2) |> Matrex.transpose()
 
     {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)

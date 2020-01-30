@@ -17,6 +17,7 @@ defmodule MatrexNumerix.GPE do
     kdata = kmod.kern_dist(xx, xx)
 
     %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y, logNoise: logNoise, mean: mean}
+    |> GP.Kernel.update_mll()
   end
 
   def predict_y(gpe = %GPE{}, x = %Matrex{}) do
@@ -35,9 +36,17 @@ defmodule MatrexNumerix.GPE do
     for k <- 1..n, reduce: {zeros(size(x)), zeros(size(x))} do
       {mu, sigma2} ->
         xk = x |> submatrix(1..dims, k..k)
-        {m, sig} = predictMVN(xk, gpe)
+        # xk = x |> submatrix(k..k, 1..dims)
+        {mm, sig} = predictMVN(xk, gpe)
 
-        {mu |> set(1, k, m), sigma2 |> set(1, k, sig)}
+        mu = mu |> set_submatrix(1..1, k..k, mm)
+
+        case sig do
+          nil ->
+            {mu, sigma2}
+          sig ->
+            {mu, sigma2 |> set_submatrix(1..1, k..k, sig)}
+        end
     end
   end
 
@@ -47,8 +56,11 @@ defmodule MatrexNumerix.GPE do
     # crossdata = KernelData(kernel, xtrain, xpred)
     # priordata = KernelData(kernel, xpred, xpred)
 
-    IO.inspect(crossdata, label: :crossdata)
-    IO.inspect(priordata, label: :priordata)
+    IO.inspect(xpred, label: :XPRED)
+    IO.inspect(xtrain, label: :XTRAIN)
+    IO.inspect(ytrain, label: :YTRAIN)
+    IO.inspect(crossdata, label: :CROSSDATA)
+    IO.inspect(priordata, label: :PRIORDATA)
 
     kcross = GP.Kernel.cov(kern, xtrain, xpred, crossdata)
     kpred = GP.Kernel.cov(kern, xpred, xpred, priordata)
@@ -57,7 +69,13 @@ defmodule MatrexNumerix.GPE do
   end
 
   def predictMVN!(kxx, kff, kfx, mx, alphaf) do
-      mu = mx + transpose(kfx) * alphaf
+    IO.inspect(kxx, label: :PREDICTMVN_kxx)
+    IO.inspect(kff, label: :PREDICTMVN_kff)
+    IO.inspect(kfx, label: :PREDICTMVN_kfx)
+    IO.inspect(mx, label: :PREDICTMVN_mx)
+    IO.inspect(alphaf, label: :PREDICTMVN_alphaf)
+
+      mu = mx |> add(transpose(kfx) |> inner_dot(alphaf))
       # lck = whiten!(kff, kfx)
       # kxx = subtract_Lck(kxx, lck)
       # {mu, kxx}
