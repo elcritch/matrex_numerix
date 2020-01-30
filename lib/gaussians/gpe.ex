@@ -2,7 +2,7 @@
 defmodule MatrexNumerix.GPE do
   alias __MODULE__
   use Matrex.Operators
-  alias MatrexNumerix.GP
+  alias MatrexNumerix.GPE
 
   @moduledoc """
   Linear regression functions.
@@ -24,8 +24,10 @@ defmodule MatrexNumerix.GPE do
   end
 
   def predict_f(gpe = %GPE{}, x = %Matrex{}) do
-    {dims, n} = x
-    {gpdims, _} = gpe.xx
+    {dims, n} = size(x)
+    {gpdims, _} = gpe.xx |> size()
+    IO.inspect(dims, label: :dims)
+    IO.inspect(gpdims, label: :gpdims)
     dims == gpdims || throw(%ArgumentError{message: "Gaussian Process object and input observations do not have consistent dimensions"})
 
     ## Calculate prediction for each point independently
