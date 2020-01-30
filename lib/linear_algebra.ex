@@ -81,14 +81,42 @@ defmodule MatrexNumerix.LinearAlgebra do
         s =
           for j <- n..(i+1), reduce: s do
             s ->
-              # s - Matrex.dot(u[i][j], x[j])
               s - u[i][j] * x[j]
           end
 
         x |> Matrex.set(1, i, s / u[i][i] )
     end
-    # |> Matrex.from_list()
+    |> Matrex.transpose()
+  end
 
+  def forward_substitution(l, b) do
+    use Matrex.Operators
+
+    {_ni, n} = size(l)
+
+    y = Matrex.zeros(1,n) |> Matrex.set(1, 1, b[1])
+
+    # Y(1) = B(1)
+    # DO  I = 2, N-1
+    #   S = B(I)
+    #   DO  J = 1, I-1
+    #     S = S - DPROD(L(I,J), Y(J))
+    #   END DO
+    # END DO
+
+    for i <- 2..n, reduce: y do
+      y ->
+        s = b[i]
+
+        s =
+          for j <- 1..(i-1), reduce: s do
+            s ->
+              s - l[i][j] * y[j]
+          end
+
+        y |> Matrex.set(1, i, s / l[i][i] )
+    end
+    |> Matrex.transpose()
   end
 
 end
