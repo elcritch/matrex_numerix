@@ -300,6 +300,7 @@ defmodule MatrexNumerix.GP do
     """
 
     xx = expected_predict |> Matrex.column(1) |> Matrex.submatrix(1..1, 1..1) |> Matrex.transpose()
+    # xx = expected_predict |> Matrex.column(1) |> Matrex.transpose()
     yy = expected_predict |> Matrex.column(2) |> Matrex.transpose()
 
     {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)

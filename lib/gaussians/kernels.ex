@@ -55,7 +55,7 @@ defmodule MatrexNumerix.GP.Kernel do
       {dim1, nobs1} = size(xx1)
       {dim2, nobs2} = size(xx2)
 
-      (dim1==dim2) || throw(%ArgumentError{message: "xx1 and xx2 must have same dimension"})
+      (dim1==dim2) || throw(%ArgumentError{message: "xx1 and xx2 must have same dimension: #{inspect size(xx1)} // #{inspect size(xx2)}"})
 
       IO.inspect([nobs1: nobs1, nobs2: nobs2], label: :COV_NOBS)
 

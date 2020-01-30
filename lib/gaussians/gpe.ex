@@ -52,17 +52,22 @@ defmodule MatrexNumerix.GPE do
 
   def predictMVN(xpred, gpe = %GPE{xx: xtrain , y: ytrain, kern: kern = %{__struct__: kmod}, mean: mf, alpha: alpha, cK: cK}) do
     crossdata = kmod.kern_dist(xtrain, xpred)
+    crossdata = %{ crossdata | rdata: crossdata.rdata}
     priordata = kmod.kern_dist(xpred, xpred)
+    priordata = %{ priordata | rdata: priordata.rdata }
     # crossdata = KernelData(kernel, xtrain, xpred)
     # priordata = KernelData(kernel, xpred, xpred)
 
+    # 4] crossdata: GaussianProcesses.IsotropicData{Array{Float64,2}}([4.098969039517268; 4.420885831075749; 3.7849485140879073; 0.2999681739134916; 2.7292281214539535; 3.6295838374541436; 1.4672366764292122; 0.0; 1.2384739340714845; 2.701117188015772])
+    # 5] priordata: GaussianProcesses.IsotropicData{Array{Float64,2}}([0.0])
     IO.inspect(xpred, label: :XPRED)
     IO.inspect(xtrain, label: :XTRAIN)
     IO.inspect(ytrain, label: :YTRAIN)
     IO.inspect(crossdata, label: :CROSSDATA)
     IO.inspect(priordata, label: :PRIORDATA)
 
-    kcross = GP.Kernel.cov(kern, xtrain, xpred, crossdata)
+    kcross = GP.Kernel.cov(kern, xpred, xtrain, crossdata)
+    IO.inspect(kcross, label: :KCROSS)
     kpred = GP.Kernel.cov(kern, xpred, xpred, priordata)
     mx = GP.Mean.mean(mf, xpred)
     predictMVN!(kpred, cK, kcross, mx, alpha)
@@ -75,7 +80,7 @@ defmodule MatrexNumerix.GPE do
     IO.inspect(mx, label: :PREDICTMVN_mx)
     IO.inspect(alphaf, label: :PREDICTMVN_alphaf)
 
-      mu = mx |> add(transpose(kfx) |> inner_dot(alphaf))
+      mu = mx |> add(kfx |> inner_dot(alphaf))
       # lck = whiten!(kff, kfx)
       # kxx = subtract_Lck(kxx, lck)
       # {mu, kxx}
