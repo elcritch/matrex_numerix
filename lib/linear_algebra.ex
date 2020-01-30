@@ -60,4 +60,35 @@ defmodule MatrexNumerix.LinearAlgebra do
     end
   end
 
+  def reverse(m = %Matrex{}) do
+    m |> Enum.reverse() |> Matrex.from_list()
+  end
+  def reverse!(m = %Matrex{}) do
+    m |> Enum.reverse() |> Matrex.from_list() |> Matrex.transpose()
+  end
+
+  def backward_substitution(u, y) do
+    use Matrex.Operators
+
+    {_ni, n} = size(u)
+
+    x = Matrex.zeros(1,n) |> Matrex.set(1, n, y[n] / u[n][n])
+
+    for i <- (n-1)..1, reduce: x do
+      x ->
+        s = y[i]
+
+        s =
+          for j <- n..(i+1), reduce: s do
+            s ->
+              # s - Matrex.dot(u[i][j], x[j])
+              s - u[i][j] * x[j]
+          end
+
+        x |> Matrex.set(1, i, s / u[i][i] )
+    end
+    # |> Matrex.from_list()
+
+  end
+
 end
