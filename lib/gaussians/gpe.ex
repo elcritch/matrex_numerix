@@ -10,12 +10,12 @@ defmodule MatrexNumerix.GPE do
   Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
-  defstruct [:kdata, :kmod, :kern, :xx, :y]
+  defstruct [:kdata, :kmod, :kern, :xx, :y, :logNoise]
 
-  def calculate(xx = %Matrex{}, y = %Matrex{}, mean = %Mean{}, kernel = %{__struct__: kmod}, logNoise) do
+  def calculate(xx = %Matrex{}, y = %Matrex{}, mean = %{}, kernel = %{__struct__: kmod}, logNoise) do
     kdata = kmod.kern_dist(xx, xx)
 
-    %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y}
+    %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y, logNoise: logNoise}
   end
 
 end
@@ -259,4 +259,14 @@ LinearAlgebra.Cholesky{Float64,Array{Float64,2}}(
     0.04198798460196675 0.0262934018853028 0.06572610840492199 0.5167204841999194 0.27086807533238516 0.08174306236426206 0.9394563878756726 0.36815392190869095 0.5680197599089813 -0.004256596637965718;
     0.3038644542413161 0.2023482953743353 0.4402486378151663 0.08060566333984757 0.9988524453406431 0.5223017924975333 0.37015590818116373 0.05277118436242623 0.280517364073899 0.500221349757034], 'U', 0))
 
-      """
+31] X:
+  [4.854610892030431 5.176527683588912 4.54059036660107 1.0556100264266548 3.484869973967117 4.3852256899673066 2.2228785289423754 0.7556418525131632 1.9941157865846477 3.4567590405289352]
+
+  defprotocol SensorComputations.GP.Calc do
+    @doc "Calculate Kernel"
+    def calc(kern, xdata)
+  end
+
+  defimpl SensorComputations.GP.Calc, for: SensorComputations.GP.Mat32 do
+
+"""

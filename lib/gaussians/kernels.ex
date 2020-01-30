@@ -1,34 +1,33 @@
 
-defmodule MatrexNumerix.GP.Mean do
-  defstruct [:kind]
-end
-
 defmodule MatrexNumerix.GP.Kernel do
   alias __MODULE__
   alias MatrexNumerix.Statistics
   alias MatrexNumerix.LinearAlgebra
   alias MatrexNumerix.GP.KernelData
+  alias MatrexNumerix.GPE
   use Matrex.Operators
 
   defstruct [:distance_method]
 
   @eps 1.0e-32
 
-  # def update_mll!(gp = GPE; noise = Bool=true, domean = Bool=true, kern = Bool=true)
-  #     update_cK!(gp)
+  def update_mll(gpe = %GPE{}) do
+    # [:kdata, :kmod, :kern, :xx, :y]
+    {cov, chol, chol_comb} = update_cK(gpe)
 
-  #     μ = Statistics.mean(gp.mean, gp.x)
-  #     y = gp.y - μ
-  #     gp.alpha = gp.cK \ y
-  #     # Marginal log-likelihood
-  #     gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
-  #     gp
-  # end
+    mu = MatrexNumerix.GP.Mean.mean(gpe.mean, gpe.x)
+    y = gpe.y - mu
 
+    # gpe.alpha = gpe.cK \ y
+    # Marginal log-likelihood
+    # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
+    gpe
+  end
 
-  def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
+  # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
+  def update_cK(%GPE{xx: x, kern: kernel, logNoise: logNoise, kdata: kdata}) do
     {dim, nobs} = size(x)
-    sigma_buffer = cov(kernel, x, x, data)
+    sigma_buffer = cov(kernel, x, x, kdata)
     noise = :math.exp(2*logNoise) + @eps
 
     x_idt = Matrex.eye(nobs)
@@ -37,7 +36,7 @@ defmodule MatrexNumerix.GP.Kernel do
     {sigma_buffer, chol} = make_posdef!(sigma_buffer)
     # make chol symmetric: get upper triag w/ no diag
     lr_offdiag = LinearAlgebra.ones_upper_offdiag(nobs) |> Matrex.transpose()
-    chol = chol |> Matrex.add(sigma_buffer |> Matrex.multiply(lr_offdiag))
+    chol_combined = chol |> Matrex.add(sigma_buffer |> Matrex.multiply(lr_offdiag))
 
     {sigma_buffer, chol, chol_combined}
   end

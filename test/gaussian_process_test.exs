@@ -117,9 +117,9 @@ defmodule MatrexNumerix.GP do
       """) |> Matrex.transpose()
 
     logNoise = -1.0
-    m = %MatrexNumerix.GP.Mean{}
+    mu = %MatrexNumerix.GP.MeanZero{}
     kern = %MatrexNumerix.GP.Mat32Iso{sigma2: 1.0, scale: 1.0}
-    gpe = MatrexNumerix.GPE.calculate(x, y, m, kern, logNoise)
+    gpe = MatrexNumerix.GPE.calculate(x, y, mu, kern, logNoise)
 
     # IO.inspect(gpe, label: :gpe)
     cov_res = MatrexNumerix.GP.Kernel.cov(kern, x, x, gpe.kdata)
@@ -143,7 +143,8 @@ defmodule MatrexNumerix.GP do
     assert abs(cov_res |> Matrex.subtract(expected_cov) |> Matrex.sum()) < 1.0e-5
 
     # sigma_buffer = MatrexNumerix.GP.Kernel.cov(kern, x, x, gpe.kdata)
-    {sigma_buffer_noise, chol} = MatrexNumerix.GP.Kernel.update_cK(x, kern, logNoise, gpe.kdata)
+    # {sigma_buffer_noise, chol, chol_comb} = MatrexNumerix.GP.Kernel.update_cK(x, kern, logNoise, gpe.kdata)
+    {sigma_buffer_noise, chol, chol_comb} = MatrexNumerix.GP.Kernel.update_cK(gpe)
 
     expected_cov_noise = Matrex.new """
       1.1353352832366128 0.891860705058954 0.8962031669952231 0.010519326759677965 0.3144852326610042 0.8041120707773918 0.05825048219777887 0.006685560932908665 0.04198798460196675 0.3038644542413161;
@@ -177,11 +178,11 @@ defmodule MatrexNumerix.GP do
       0.3038644542413161 0.2023482953743353 0.4402486378151663 0.08060566333984757 0.9988524453406431 0.5223017924975333 0.37015590818116373 0.05277118436242623 0.280517364073899 0.500221349757034
     """
 
-    IO.inspect(chol, label: :chol)
+    IO.inspect(chol_comb, label: :chol_comb)
     IO.inspect(expected_chol_factors, label: :expected_chol_factors)
-    IO.inspect(chol |> Matrex.subtract(expected_chol_factors), label: :diff_expected_chol_factors)
+    IO.inspect(chol_comb |> Matrex.subtract(expected_chol_factors), label: :diff_expected_chol_factors)
 
-    assert abs(chol |> Matrex.subtract(expected_chol_factors) |> Matrex.sum()) < 1.0e-4
+    assert abs(chol_comb |> Matrex.subtract(expected_chol_factors) |> Matrex.sum()) < 1.0e-4
 
     _x = """
     20] kerneldata:
