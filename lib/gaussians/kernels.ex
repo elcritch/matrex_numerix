@@ -6,6 +6,7 @@ end
 defmodule MatrexNumerix.GP.Kernel do
   alias __MODULE__
   alias MatrexNumerix.Statistics
+  alias MatrexNumerix.LinearAlgebra
   alias MatrexNumerix.GP.KernelData
   use Matrex.Operators
 
@@ -30,15 +31,15 @@ defmodule MatrexNumerix.GP.Kernel do
     sigma_buffer = cov(kernel, x, x, data)
     noise = :math.exp(2*logNoise) + @eps
 
-    sigma_buffer = sigma_buffer + Matrex.eye(nobs) * noise
+    x_idt = Matrex.eye(nobs)
+    sigma_buffer = sigma_buffer + x_idt * noise
 
-  #     # for i <- 1..nobs do
-  #       # sigma_buffer[i,i] += noise
-  #     # end
+    {sigma_buffer, chol} = make_posdef!(sigma_buffer)
+    # make chol symmetric: get upper triag w/ no diag
+    lr_offdiag = LinearAlgebra.ones_upper_offdiag(nobs) |> Matrex.transpose()
+    chol = chol |> Matrex.add(sigma_buffer |> Matrex.multiply(lr_offdiag))
 
-  #     sigma_buffer, chol = make_posdef!(sigma_buffer, cholfactors(cK))
-
-  #     wrap_cK(cK, sigma_buffer, chol)
+    {sigma_buffer, chol, chol_combined}
   end
 
   def cov(k = %{}, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata = %KernelData{}) do
@@ -85,6 +86,40 @@ defmodule MatrexNumerix.GP.Kernel do
 
   def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %KernelData{}, i, j, dim) do
       kmod.cov(kern, kdata.rdata[i][j])
+  end
+
+  def make_posdef!(mm = %Matrex{}) do
+    {m, n} = size(mm)
+    m == n || throw(%ArgumentError{message: "Covariance matrix must be square"})
+
+    {mm!, chol} =
+      for _ <- 1..10, reduce: {mm, :none} do # 10 chances
+        {mm!, chol} ->
+
+        case chol do
+          :none ->
+            # try cholesky ... assuming inf's mean it's no PD?
+            chol! = Matrex.cholesky(mm!) |> Matrex.transpose()
+
+            unless chol! |> Matrex.sum() == :nan do
+              IO.inspect(:success, label: :chol_state)
+              {mm!, chol!}
+            else
+              # that wasn't (numerically) positive definite,
+              # so let's add some weight to the diagonal
+              IO.inspect(:fail, label: :chol_state)
+              diag_weight = 1.0e-6 * trace(m)/n * Matrew.eye(Matrex.size(m))
+              {mm! + diag_weight, :none}
+            end
+
+          chol ->
+            {mm!, chol}
+        end
+      end
+
+    # copyto!(chol_factors, m)
+    # chol = cholesky!(Symmetric(chol_factors, :U))
+    {mm!, chol}
   end
 
 end

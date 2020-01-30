@@ -40,4 +40,24 @@ defmodule MatrexNumerix.LinearAlgebra do
     Math.nth_root(s, p)
   end
 
+  def ones_upper(n), do: ones_upper(n, n)
+  def ones_upper(ni,nj) do
+    m1r = Matrex.ones(1, nj)
+    for i <- 1..nj, reduce: Matrex.zeros(ni,nj) do
+      m! ->
+        m1sl = m1r |> Matrex.submatrix(1..1, i..nj)
+        m! |> Matrex.set_submatrix(i..i, i..nj, m1sl)
+    end
+  end
+
+  def ones_upper_offdiag(n), do: ones_upper_offdiag(n, n)
+  def ones_upper_offdiag(ni,nj) do
+    m1r = Matrex.ones(1, nj)
+    for i <- 1..(nj-1), reduce: Matrex.zeros(ni,nj) do
+      m! ->
+        m1sl = m1r |> Matrex.submatrix(1..1, (i+1)..nj)
+        m! |> Matrex.set_submatrix(i..i, (i+1)..nj, m1sl)
+    end
+  end
+
 end
