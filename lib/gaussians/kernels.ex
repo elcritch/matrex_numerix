@@ -35,7 +35,9 @@ defmodule MatrexNumerix.GP.Kernel do
 
     {sigma_buffer, chol} = make_posdef!(sigma_buffer)
     # make chol symmetric: get upper triag w/ no diag
+    lu_offdiag = LinearAlgebra.ones_upper_offdiag(nobs)
     lr_offdiag = LinearAlgebra.ones_upper_offdiag(nobs) |> Matrex.transpose()
+    # chol = chol |> Matrex.add(chol |> Matrex.multiply(lu_offdiag) |> Matrex.transpose())
     chol_combined = chol |> Matrex.add(sigma_buffer |> Matrex.multiply(lr_offdiag))
 
     {sigma_buffer, chol, chol_combined}
