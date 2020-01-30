@@ -213,6 +213,8 @@ defmodule MatrexNumerix.GP do
     0.23919488774913653, -0.5874057343866655, -0.6326628757776599, 0.3666077752686025, -0.110015693382195, -0.1669449391903989, 0.5696604623620416, 0.15281025254401714, 0.2519635957792353, -0.09142496867424635
     """
 
+    assert abs(gpe!.alpha |> Matrex.subtract(expected_alpha) |> Matrex.sum()) < 1.0e-4
+
     _x = """
     20] kerneldata:
       GaussianProcesses.IsotropicData{Array{Float64,2}}(

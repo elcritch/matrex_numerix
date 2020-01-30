@@ -13,15 +13,19 @@ defmodule MatrexNumerix.GP.Kernel do
 
   def update_mll(gpe = %GPE{}) do
     # [:kdata, :kmod, :kern, :xx, :y]
-    {cov, chol, chol_comb} = update_cK(gpe)
+    {cov, chol_upper, chol_comb} = update_cK(gpe)
+    chol_lower = chol_upper |> transpose()
 
     mu = MatrexNumerix.GP.Mean.mean(gpe.mean, gpe.xx)
     y = gpe.y - mu
 
-    # gpe.alpha = gpe.cK \ y
+    #  alpha = gpe.cK \ y
+    z =  MatrexNumerix.LinearAlgebra.forward_substitution(chol_lower, y |> transpose())
+    alpha =  MatrexNumerix.LinearAlgebra.backward_substitution(chol_upper, z) |> transpose()
+
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
-    %{ gpe | y: y }
+    %{ gpe | y: y, alpha: alpha }
   end
 
   # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do

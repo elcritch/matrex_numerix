@@ -94,4 +94,64 @@ defmodule MatrexNumerix.LinearAlgebraTest do
 
     assert abs(res |> Matrex.subtract(expected) |> Matrex.sum()) < 1.0e-5
   end
+
+  test "solve Ax=b " do
+
+    # 1. Factor A = LU by Gaussian elimination (not including row swaps, discussed below!), giving Ax =
+      # b =⇒ LUx = L(Ux) = b
+      # 2. Let c = Ux. Solve Lc = b for c by forward-substitution.
+      # 3. Solve Ux = c for x by backsubstitution.
+    aa = Matrex.new """
+       4  -2  -7  -4  -8
+       9  -6  -6  -1  -5
+      -2  -9   3  -5   2
+       9   7  -9   5  -8
+      -1   6  -3   9   6
+    """
+
+    ll = Matrex.new """
+       1.0        0.0        0.0       0.0        0.0
+       1.0        1.0        0.0       0.0        0.0
+       0.444444   0.0512821  1.0       0.0        0.0
+      -0.111111   0.410256   0.582822  1.0        0.0
+      -0.222222  -0.794872   0.171779  0.0242696  1.0
+    """
+
+    uu = Matrex.new """
+      9.0  -6.0  -6.0      -1.0      -5.0
+      0.0  13.0  -3.0       6.0      -3.0
+      0.0   0.0  -4.17949  -3.86325  -5.62393
+      0.0   0.0   0.0       8.67894   9.95297
+      0.0   0.0   0.0       0.0      -0.771206
+    """
+
+    b = Matrex.new """
+      -7
+       2
+       4
+      -4
+      -7
+    """
+
+    c = MatrexNumerix.LinearAlgebra.forward_substitution(ll, b)
+
+    expected_c = Matrex.new """
+     -7.0
+      9.0
+      6.649572649572649
+    -12.345603271983638
+    -2.244344957587181
+    """
+
+    x = MatrexNumerix.LinearAlgebra.backward_substitution(uu, c)
+
+    expected_x = Matrex.new """
+      0.5059578368469305
+      -0.9285059578368458
+      2.1640696608615944
+      1.4616559731133496
+      -1.2642835319278931
+    """
+
+  end
 end
