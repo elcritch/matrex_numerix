@@ -52,7 +52,7 @@ defmodule MatrexNumerix.GP do
         1.2021311256811988
         -0.23481964557559754
         0.3316044775935818
-      """)
+      """) |> Matrex.transpose()
 
     diff_expected1 = Matrex.new("""
         0.0         0.0986089   1.87619  6.92602     8.18243    7.36614      0.0139934  21.768
@@ -85,7 +85,7 @@ defmodule MatrexNumerix.GP do
       assert dist2 |> Matrex.subtract(diff_expected1) |> Matrex.sum() < 1.0e-3
   end
 
-  test "test gp" do
+  test "test gp cov" do
 
     x = Matrex.new("""
       4.854610892030431
@@ -98,7 +98,7 @@ defmodule MatrexNumerix.GP do
       0.7556418525131632
       1.9941157865846477
       3.4567590405289352
-      """)
+      """) |> Matrex.transpose()
 
     y = Matrex.new("""
         -0.9672931901680022
@@ -111,8 +111,16 @@ defmodule MatrexNumerix.GP do
         0.7362180710829012
         0.9508490881368652
         -0.3064317818816142
-      """)
+      """) |> Matrex.transpose()
 
+    m = %MatrexNumerix.GP.Mean{}
+    kern = %MatrexNumerix.GP.Mat32Iso{sigma2: 1.0, scale: 1.0}
+    gpe = MatrexNumerix.GPE.calculate(x, y, m, kern, -2.0)
+
+    IO.inspect(gpe, label: :gpe)
+    cov_res = MatrexNumerix.GP.Kernel.cov(kern, x, x, gpe.kdata)
+
+    IO.inspect(cov_res, label: :COV_RES)
 
     # 4] Σbuffer:
     expected_sigma_buffer = Matrex.new """

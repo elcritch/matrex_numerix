@@ -1,7 +1,7 @@
 
-# defmodule MatrexNumerix.GP.ArdKernelData do
-  # defstruct [:data]
-# end
+defmodule MatrexNumerix.GP.Mean do
+  defstruct [:kind]
+end
 
 defmodule MatrexNumerix.GP.Kernel do
   alias __MODULE__

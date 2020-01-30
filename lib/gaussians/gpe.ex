@@ -1,20 +1,21 @@
 
-defmodule MatrexNumerix.GP do
+defmodule MatrexNumerix.GPE do
+  alias __MODULE__
+  alias MatrexNumerix.GP.Mean
+  use Matrex.Operators
+
   @moduledoc """
   Linear regression functions.
 
   Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
-  import Matrex
+  defstruct [:kdata, :kmod, :kern, :xx, :y]
 
-  alias MatrexNumerix.Correlation
-  import Kernel, except: [-: 1, +: 2, -: 2, *: 2, /: 2, <|>: 2]
-  import Matrex
-  import Matrex.Operators
+  def calculate(xx = %Matrex{}, y = %Matrex{}, mean = %Mean{}, kernel = %{__struct__: kmod}, logNoise) do
+    kdata = kmod.kern_dist(xx, xx)
 
-  def gpe(xx, y, mean = %{}, kernel = %{__struct__: kmod}, logNoise) do
-    kdata = kmod.kernel_dist(xx, xx)
+    %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y}
   end
 
 end

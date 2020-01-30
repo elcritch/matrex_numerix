@@ -4,10 +4,9 @@ defmodule MatrexNumerix.GP.Mat32Iso do
   """
   alias __MODULE__
   use Matrex.Operators
-  alias MatrexNumerix.GP.Kernel
-  alias MatrexNumerix.GP.IsotropicKernelData
+  alias MatrexNumerix.GP
 
-  def kern_dist(x1, x2), do: MatrexNumerix.GP.KernelData.isotropic(:euclidian, x1, x2)
+  def kern_dist(x1, x2), do: GP.KernelData.isotropic(:euclidian, x1, x2)
 
   defstruct sigma2: 0.0, scale: 0.0
   @type t :: %Mat32Iso{sigma2: float, scale: float}
