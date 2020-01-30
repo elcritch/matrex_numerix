@@ -67,27 +67,52 @@ defmodule MatrexNumerix.LinearAlgebra do
     m |> Enum.reverse() |> Matrex.from_list() |> Matrex.transpose()
   end
 
-  def backward_substitution(u, y) do
+  def backward_substitution(uu, y) do
     use Matrex.Operators
+    # backward substitution to solve for y = Ux
+    {_, n} = size(uu)
+    x = zeros(size(y))
 
-    {_ni, n} = size(u)
-
-    x = Matrex.zeros(1,n) |> Matrex.set(1, n, y[n] / u[n][n])
-
-    for i <- (n-1)..1, reduce: x do
+    for i <- n..1, reduce: x do # loop over the rows from bottom to top
       x ->
-        s = y[i]
-
-        s =
-          for j <- n..(i+1), reduce: s do
-            s ->
-              s - u[i][j] * x[j]
-          end
-
-        x |> Matrex.set(1, i, s / u[i][i] )
+        r = for k <- (i+1)..n |> Enum.reject(& &1 > n), reduce: y[i] do
+              r -> r - uu[i][k] * x[k]
+            end
+        # x[i] = r / uu[i,i]
+        set(x, i, 1, r / uu[i][i] )
     end
-    |> Matrex.transpose()
   end
+
+  # def backward_substitution(u, y) do
+  #   use Matrex.Operators
+
+  #   {_ni, n} = size(u)
+  #   x = zeros(size(u)) |> set(1, n, y[n] / u[n][n])
+
+  #   for i <- (n-1)..1, reduce: x do
+  #     x ->
+  #       s = y[i]
+
+  #       s =
+  #         for j <- n..(i+1), reduce: s do
+  #           s ->
+  #             s - u[i][j] * x[j]
+  #         end
+
+  #       x |> Matrex.set(1, i, s / u[i][i] )
+  #   end
+  #   |> Matrex.transpose()
+  # end
+
+      # # forward substitution to solve for Ly = B
+      # y = np.zeros(B.size)
+      # for m, b in enumerate(B.flatten()):
+      #     y[m] = b
+      #     # skip for loop if m == 0
+      #     if m:
+      #         for n in xrange(m):
+      #             y[m] -= y[n] * pl[m,n]
+      #     y[m] /= pl[m, m]
 
   def forward_substitution(l, b) do
     use Matrex.Operators

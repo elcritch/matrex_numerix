@@ -17,6 +17,16 @@ defmodule MatrexNumerix.LinearAlgebraTest do
     assert res == Matrex.new("3; 4; -1")
   end
 
+  test "backward subst 4x4" do
+
+    au = Matrex.new " 1 2 1 -1; 0 -4 1 7; 0 0 -2 1; 0 0 0 -1 "
+    bu = Matrex.new " 5; 1; 1; 3 "
+
+    res = MatrexNumerix.LinearAlgebra.backward_substitution(au, bu)
+
+    assert res == Matrex.new("16; -6; -2; -3")
+  end
+
   test "forward subst" do
 
     aa = Matrex.new [[1.0, 0.0, 0.0], [2.0, 1.0, 0.0], [-1.0, -3.0, 1.0]]
