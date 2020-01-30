@@ -3,7 +3,7 @@ defmodule MatrexNumerix.GP.Kernel do
   alias __MODULE__
   alias MatrexNumerix.Statistics
   alias MatrexNumerix.LinearAlgebra
-  alias MatrexNumerix.GP.KernelData
+  alias MatrexNumerix.GP
   alias MatrexNumerix.GPE
   use Matrex.Operators
 
@@ -16,12 +16,12 @@ defmodule MatrexNumerix.GP.Kernel do
     {cov, chol_upper, chol_comb} = update_cK(gpe)
     chol_lower = chol_upper |> transpose()
 
-    mu = MatrexNumerix.GP.Mean.mean(gpe.mean, gpe.xx)
+    mu = GP.Mean.mean(gpe.mean, gpe.xx)
     y = gpe.y - mu
 
     #  alpha = gpe.cK \ y
-    z =  MatrexNumerix.LinearAlgebra.forward_substitution(chol_lower, y |> transpose())
-    alpha =  MatrexNumerix.LinearAlgebra.backward_substitution(chol_upper, z) |> transpose()
+    z = LinearAlgebra.forward_substitution(chol_lower, y |> transpose())
+    alpha = LinearAlgebra.backward_substitution(chol_upper, z) |> transpose()
 
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
@@ -47,7 +47,7 @@ defmodule MatrexNumerix.GP.Kernel do
     {sigma_buffer, chol, chol_combined}
   end
 
-  def cov(k = %{}, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata = %KernelData{}) do
+  def cov(k = %{}, xx1 = %Matrex{}, xx2 = %Matrex{}, kdata = %GP.KernelData{}) do
       # if xx1 == xx2
         # cov(cK, k, xx1, data)
       # end
@@ -89,7 +89,7 @@ defmodule MatrexNumerix.GP.Kernel do
   #     end
   # end
 
-  def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %KernelData{}, i, j, dim) do
+  def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %GP.KernelData{}, i, j, dim) do
       kmod.cov(kern, kdata.rdata[i][j])
   end
 
