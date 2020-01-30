@@ -25,7 +25,7 @@ defmodule MatrexNumerix.Fft do
     - a matrix of real and imaginary fourier transform output
   """
   def dft_real(vector_data(columns1, _body1) = y) do
-    Matrex.concat(y, Matrex.zeros(1, columns1), :rows)
+    Matrex.concat(y, Matrex.zeros(columns1, 1), :columns)
     |> dft_complex()
   end
 
