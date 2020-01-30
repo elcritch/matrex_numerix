@@ -305,6 +305,15 @@ defmodule MatrexNumerix.GP do
 
     {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)
 
+    assert mu[1] == 0.7155374884605408
+
+    xx = expected_predict |> Matrex.column(1) |> Matrex.transpose()
+    yy = expected_predict |> Matrex.column(2) |> Matrex.transpose()
+
+    {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)
+
+    assert abs(mu |> Matrex.subtract(yy) |> Matrex.sum()) < 1.0e-4
+
     # 1] kernel: Type: Mat32Iso{Float64}, Params: [0.0, 0.0]
     # 2] xtrain: [4.854610892030431 5.176527683588912 4.54059036660107 1.0556100264266548 3.484869973967117 4.3852256899673066 2.2228785289423754 0.7556418525131632 1.9941157865846477 3.4567590405289352]
     # 3] xpred: [0.7556418525131632]
