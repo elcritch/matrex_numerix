@@ -57,15 +57,15 @@ defmodule MatrexNumerix.GP.Kernel do
 
       (dim1==dim2) || throw(%ArgumentError{message: "xx1 and xx2 must have same dimension: #{inspect size(xx1)} // #{inspect size(xx2)}"})
 
-      IO.inspect([nobs1: nobs1, nobs2: nobs2], label: :COV_NOBS)
+      # IO.inspect([nobs1: nobs1, nobs2: nobs2], label: :COV_NOBS)
 
       {dim, _} = size(xx1)
 
       for i <- 1..nobs1, into: [] do
         for j <- 1..nobs2, into: [] do
           # cK[i,j] = cov_ij(k, xx1, xx2, data, i, j, dim)
-          IO.inspect({i, j, dim}, label: COV_DIMS)
-          IO.inspect({k, xx1, xx2, kdata}, label: COVS)
+          # IO.inspect({i, j, dim}, label: COV_DIMS)
+          # IO.inspect({k, xx1, xx2, kdata}, label: COVS)
           cov_ij(k, xx1, xx2, kdata, i, j, dim)
         end
       end
@@ -73,17 +73,17 @@ defmodule MatrexNumerix.GP.Kernel do
   end
 
   def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %GP.KernelData{}, i, j, dim) do
-      IO.inspect(kdata.rdata, label: COV_IJ_RDATA)
-      IO.inspect({i,j}, label: COV_IJ_RDATA_IJ_IDX)
+      # IO.inspect(kdata.rdata, label: COV_IJ_RDATA)
+      # IO.inspect({i,j}, label: COV_IJ_RDATA_IJ_IDX)
       # IO.inspect(kdata.rdata |> get(i,j), label: COV_IJ_RDATA_IJ)
       # kmod.cov(kern, kdata.rdata |> get(i,j))
       case kdata.rdata |> size() do
         {_, 1} ->
-          kmod.cov(kern, kdata.rdata[j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+          kmod.cov(kern, kdata.rdata[j] )
         {1, _} ->
-          kmod.cov(kern, kdata.rdata[j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+          kmod.cov(kern, kdata.rdata[j] )
         {_, _} ->
-          kmod.cov(kern, kdata.rdata[i][j] |> IO.inspect(label: COV_IJ_RDATA_IJ_KMOD))
+          kmod.cov(kern, kdata.rdata[i][j] )
       end
   end
 
