@@ -15,13 +15,13 @@ defmodule MatrexNumerix.GP.Kernel do
     # [:kdata, :kmod, :kern, :xx, :y]
     {cov, chol, chol_comb} = update_cK(gpe)
 
-    mu = MatrexNumerix.GP.Mean.mean(gpe.mean, gpe.x)
+    mu = MatrexNumerix.GP.Mean.mean(gpe.mean, gpe.xx)
     y = gpe.y - mu
 
     # gpe.alpha = gpe.cK \ y
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
-    gpe
+    %{ gpe | y: y }
   end
 
   # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do

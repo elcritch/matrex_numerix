@@ -10,12 +10,12 @@ defmodule MatrexNumerix.GPE do
   Taken from `MatrexNumerix` project at https://github.com/safwank/MatrexNumerix under the MIT license.
   """
 
-  defstruct [:kdata, :kmod, :kern, :xx, :y, :logNoise]
+  defstruct [:kdata, :kmod, :mean, :kern, :xx, :y, :logNoise]
 
   def calculate(xx = %Matrex{}, y = %Matrex{}, mean = %{}, kernel = %{__struct__: kmod}, logNoise) do
     kdata = kmod.kern_dist(xx, xx)
 
-    %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y, logNoise: logNoise}
+    %GPE{kdata: kdata, kmod: kmod, kern: kernel, xx: xx, y: y, logNoise: logNoise, mean: mean}
   end
 
 end

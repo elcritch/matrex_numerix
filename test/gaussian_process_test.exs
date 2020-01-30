@@ -184,6 +184,9 @@ defmodule MatrexNumerix.GP do
 
     assert abs(chol_comb |> Matrex.subtract(expected_chol_factors) |> Matrex.sum()) < 1.0e-4
 
+    gpe! = MatrexNumerix.GP.Kernel.update_mll(gpe)
+    IO.inspect(gpe!, label: :gpe!)
+
     _x = """
     20] kerneldata:
       GaussianProcesses.IsotropicData{Array{Float64,2}}(
