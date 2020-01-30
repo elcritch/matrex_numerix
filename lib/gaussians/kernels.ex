@@ -20,8 +20,8 @@ defmodule MatrexNumerix.GP.Kernel do
     y = gpe.y - mu
 
     #  alpha = gpe.cK \ y
-    z = LinearAlgebra.forward_substitution(chol_lower, y |> transpose())
-    alpha = LinearAlgebra.backward_substitution(chol_upper, z) |> transpose()
+    z = LinearAlgebra.forward_substitution(chol_lower, y)
+    alpha = LinearAlgebra.backward_substitution(chol_upper, z)
 
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
