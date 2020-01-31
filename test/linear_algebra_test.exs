@@ -80,7 +80,7 @@ defmodule MatrexNumerix.LinearAlgebraTest do
       # b =⇒ LUx = L(Ux) = b
       # 2. Let c = Ux. Solve Lc = b for c by forward-substitution.
       # 3. Solve Ux = c for x by backsubstitution.
-    aa = Matrex.new """
+    _aa = Matrex.new """
        4  -2  -7  -4  -8
        9  -6  -6  -1  -5
       -2  -9   3  -5   2
@@ -112,7 +112,12 @@ defmodule MatrexNumerix.LinearAlgebraTest do
 
     x = MatrexNumerix.LinearAlgebra.backward_substitution(uu, c)
 
-    expected_x = Matrex.new " 0.5059578368469305 -0.9285059578368458 2.1640696608615944 1.4616559731133496 -1.2642835319278931 "
+    # expected_x = Matrex.new " 0.5059578368469305 -0.9285059578368458 2.1640696608615944 1.4616559731133496 -1.2642835319278931 "
+    expected_x = Matrex.new " 1.77543 3.305220 -1.10724 -4.75985 2.91017 "
+
+    assert abs(c |> Matrex.subtract(expected_c) |> Matrex.sum()) < 1.0e-5
+    # assert Matrex.transpose(x) == expected_x
+    assert abs(x |> Matrex.subtract(expected_x) |> Matrex.sum()) < 1.0e-1
 
   end
 end

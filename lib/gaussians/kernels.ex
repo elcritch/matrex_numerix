@@ -1,7 +1,5 @@
 
 defmodule MatrexNumerix.GP.Kernel do
-  alias __MODULE__
-  alias MatrexNumerix.Statistics
   alias MatrexNumerix.LinearAlgebra
   alias MatrexNumerix.GP
   alias MatrexNumerix.GPE
@@ -13,7 +11,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
   def update_mll(gpe = %GPE{}) do
     # [:kdata, :kmod, :kern, :xx, :y]
-    {cov, chol_upper, chol_comb} = update_cK(gpe)
+    {_cov, chol_upper, _chol_comb} = update_cK(gpe)
     chol_lower = chol_upper |> transpose()
 
     mu = GP.Mean.mean(gpe.mean, gpe.xx)
@@ -30,7 +28,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
   # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
   def update_cK(%GPE{xx: x, kern: kernel, logNoise: logNoise, kdata: kdata}) do
-    {dim, nobs} = size(x)
+    {_dim, nobs} = size(x)
     sigma_buffer = cov(kernel, x, x, kdata)
     noise = :math.exp(2*logNoise) + @eps
 
@@ -39,9 +37,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
     {sigma_buffer, chol} = make_posdef!(sigma_buffer)
     # make chol symmetric: get upper triag w/ no diag
-    lu_offdiag = LinearAlgebra.ones_upper_offdiag(nobs)
     lr_offdiag = LinearAlgebra.ones_upper_offdiag(nobs) |> Matrex.transpose()
-    # chol = chol |> Matrex.add(chol |> Matrex.multiply(lu_offdiag) |> Matrex.transpose())
     chol_combined = chol |> Matrex.add(sigma_buffer |> Matrex.multiply(lr_offdiag))
 
     {sigma_buffer, chol, chol_combined}
@@ -72,11 +68,7 @@ defmodule MatrexNumerix.GP.Kernel do
       |> Matrex.new()
   end
 
-  def cov_ij(kern = %{__struct__: kmod}, x1 = %Matrex{}, x2 = %Matrex{}, kdata = %GP.KernelData{}, i, j, dim) do
-      # IO.inspect(kdata.rdata, label: COV_IJ_RDATA)
-      # IO.inspect({i,j}, label: COV_IJ_RDATA_IJ_IDX)
-      # IO.inspect(kdata.rdata |> get(i,j), label: COV_IJ_RDATA_IJ)
-      # kmod.cov(kern, kdata.rdata |> get(i,j))
+  def cov_ij(kern = %{__struct__: kmod}, _x1 = %Matrex{}, _x2 = %Matrex{}, kdata = %GP.KernelData{}, i, j, _dim) do
       case kdata.rdata |> size() do
         {_, 1} ->
           kmod.cov(kern, kdata.rdata[j] )
@@ -89,7 +81,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
   def make_posdef!(mm = %Matrex{}) do
     {m, n} = size(mm)
-    m == n || throw(%ArgumentError{message: "Covariance matrix must be square"})
+    m == n || raise(%ArgumentError{message: "Covariance matrix must be square"})
 
     {mm!, chol} =
       for _ <- 1..10, reduce: {mm, :none} do # 10 chances
@@ -107,7 +99,7 @@ defmodule MatrexNumerix.GP.Kernel do
               # that wasn't (numerically) positive definite,
               # so let's add some weight to the diagonal
               # IO.inspect(:fail, label: :chol_state)
-              diag_weight = 1.0e-6 * trace(m)/n * Matrew.eye(Matrex.size(m))
+              diag_weight = 1.0e-6 * trace(m)/n * Matrex.eye(Matrex.size(m))
               {mm! + diag_weight, :none}
             end
 

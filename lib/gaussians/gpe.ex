@@ -30,7 +30,7 @@ defmodule MatrexNumerix.GPE do
     {gpdims, _} = gpe.xx |> size()
     IO.inspect(dims, label: :dims)
     IO.inspect(gpdims, label: :gpdims)
-    dims == gpdims || throw(%ArgumentError{message: "Gaussian Process object and input observations do not have consistent dimensions"})
+    dims == gpdims || raise(%ArgumentError{message: "Gaussian Process object and input observations do not have consistent dimensions"})
 
     ## Calculate prediction for each point independently
     for k <- 1..n, reduce: {zeros(size(x)), zeros(size(x))} do
@@ -50,34 +50,22 @@ defmodule MatrexNumerix.GPE do
     end
   end
 
-  def predictMVN(xpred, gpe = %GPE{xx: xtrain , y: ytrain, kern: kern = %{__struct__: kmod}, mean: mf, alpha: alpha, cK: cK}) do
-    crossdata = kmod.kern_dist(xtrain, xpred)
-    crossdata = %{ crossdata | rdata: crossdata.rdata}
-    priordata = kmod.kern_dist(xpred, xpred)
-    priordata = %{ priordata | rdata: priordata.rdata }
-    # crossdata = KernelData(kernel, xtrain, xpred)
-    # priordata = KernelData(kernel, xpred, xpred)
+  def predictMVN(xpred,
+                 %GPE{xx: xtrain , y: ytrain,
+                      kern: kern = %{__struct__: kmod},
+                      mean: mf,
+                      alpha: alpha, cK: cK}) do
 
-    # IO.inspect(xpred, label: :XPRED)
-    # IO.inspect(xtrain, label: :XTRAIN)
-    # IO.inspect(ytrain, label: :YTRAIN)
-    # IO.inspect(crossdata, label: :CROSSDATA)
-    # IO.inspect(priordata, label: :PRIORDATA)
+    crossdata = kmod.kern_dist(xtrain, xpred)
+    priordata = kmod.kern_dist(xpred, xpred)
 
     kcross = GP.Kernel.cov(kern, xpred, xtrain, crossdata)
-    # IO.inspect(kcross, label: :KCROSS)
     kpred = GP.Kernel.cov(kern, xpred, xpred, priordata)
     mx = GP.Mean.mean(mf, xpred)
     predictMVN!(kpred, cK, kcross, mx, alpha)
   end
 
   def predictMVN!(kxx, kff, kfx, mx, alphaf) do
-    # IO.inspect(kxx, label: :PREDICTMVN_kxx)
-    # IO.inspect(kff, label: :PREDICTMVN_kff)
-    # IO.inspect(kfx, label: :PREDICTMVN_kfx)
-    # IO.inspect(mx, label: :PREDICTMVN_mx)
-    # IO.inspect(alphaf, label: :PREDICTMVN_alphaf)
-
     mu = mx |> add(kfx |> inner_dot(alphaf))
     # lck = whiten!(kff, kfx)
     # kxx = subtract_Lck(kxx, lck)

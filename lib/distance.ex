@@ -55,7 +55,7 @@ defmodule MatrexNumerix.Distance do
     norm(p, x |> Matrex.subtract(y))
   end
   def minkowski(x = %Matrex{}, y = %Matrex{}, w = %Matrex{}, p) do
-    norm(p, x |> Matrex.subtract(y), Matrex.dot(w))
+    norm(p, x |> Matrex.subtract(y) |> Matrex.dot(w))
   end
 
   @doc """
@@ -125,14 +125,14 @@ defmodule MatrexNumerix.Distance do
   end
 
   def diff_conv(method,
-                vector_data(columns1, _data1, _first) = xx,
-                vector_data(columns2, _data2, _second) = yy,
+                vector_data(_columns1, _data1, _first) = xx,
+                vector_data(_columns2, _data2, _second) = yy,
                 weights) do
 
     {1, nobsx} = Matrex.size(xx)
     {1, nobsy} = Matrex.size(yy)
     weights = weights || Matrex.ones(1, 1)
-    {dimw, nobsw} = Matrex.size(weights)
+    {_dimw, nobsw} = Matrex.size(weights)
 
     (nobsx == nobsy == nobsw) || %ArgumentError{message: "nobs(xx) != nobs(yy) != nobs(weights)"}
 
