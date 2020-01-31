@@ -39,14 +39,10 @@ defmodule MatrexNumerix.GPE do
         # xk = x |> submatrix(k..k, 1..dims)
         {mm, sig} = predictMVN(xk, gpe)
 
-        mu = mu |> set_submatrix(1..1, k..k, mm)
+        mu = mu |> Vector.set_slice(k..k, mm)
+        sigma2 = sigma2 |> Vector.set_slice(k..k, sig || Vector.new(" NaN "))
 
-        case sig do
-          nil ->
-            {mu, sigma2}
-          sig ->
-            {mu, sigma2 |> set_submatrix(1..1, k..k, sig)}
-        end
+        {mu, sigma2}
     end
   end
 
