@@ -13,6 +13,7 @@ defmodule MatrexNumerix.GP.Mat32Iso do
 
   @sqrt3 :math.sqrt(3.0)
 
+  @spec cov(MatrexNumerix.GP.Mat32Iso.t(), number) :: number | Matrex.t()
   def cov(mat = %Mat32Iso{}, r) when is_number(r) do
     s = @sqrt3 * r / mat.scale
     mat.sigma2 * (1.0 + s) * :math.exp(-s)

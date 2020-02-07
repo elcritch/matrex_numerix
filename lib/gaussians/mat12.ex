@@ -1,4 +1,4 @@
-defmodule MatrexNumerix.GP.Mat11Iso do
+defmodule MatrexNumerix.GP.Mat12Iso do
   @moduledoc """
   Matern 1/2 ARD covariance Function
       Mat12Ard(ll = %Vector{}, lσ = number() )
@@ -16,21 +16,18 @@ defmodule MatrexNumerix.GP.Mat11Iso do
 
   defstruct scale: 0.0, sigma2: 0.0
 
-  @type t :: %Mat11Iso{sigma2: float, scale: float}
+  @type t :: %Mat12Iso{sigma2: float, scale: float}
 
   # cov(mat::Mat12Iso, r::Number) = mat.σ2 * exp(-r / mat.ℓ)
 
-  def cov(mat = %Mat11Iso{}, r) when is_number(r) do
-    exp(-2.0 * mat.scale) * exp(-r / exp( mat.scale ))
+  def cov(mat = %Mat12Iso{}, r) when is_number(r) do
+    :math.exp(-2.0 * mat.sigma2) * :math.exp(-r / exp(mat.scale) )
   end
 
-  def dk_dll(mat = %Mat11Iso{}, r, wdiffp) when is_number(r) and is_number(wdiffp) do
-    wdiffp / r * cov(mat, r)
-  end
 
 end
 
-defmodule MatrexNumerix.GP.Mat11Ard do
+defmodule MatrexNumerix.GP.Mat12Ard do
   @doc """
   Matern 1/2 ARD covariance Function
       Mat12Ard(ll::Vector{T}, lσ::T)
@@ -48,13 +45,13 @@ defmodule MatrexNumerix.GP.Mat11Ard do
 
   defstruct scale: Vector.zeros(1), sigma2: 0.0, priors: Vector.zeros(1)
 
-  @type t :: %Mat11Ard{sigma2: float, scale: Matrex.t(), priors: Matrex.t()}
+  @type t :: %Mat12Ard{sigma2: float, scale: Matrex.t(), priors: Matrex.t()}
 
-  def cov(mat = %Mat11Ard{}, r) when is_number(r) do
+  def cov(mat = %Mat12Ard{}, r) when is_number(r) do
     exp(2.0 * mat.sigma2) * exp(-r / exp(-2.0 * mat.scale))
   end
 
-  def dk_dll(mat = %Mat11Ard{}, r, wdiffp) when is_number(r) and is_number(wdiffp) do
+  def dk_dll(mat = %Mat12Ard{}, r, wdiffp) when is_number(r) and is_number(wdiffp) do
     wdiffp / r * cov(mat, r)
   end
 
