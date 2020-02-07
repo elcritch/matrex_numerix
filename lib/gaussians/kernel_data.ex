@@ -11,4 +11,12 @@ defmodule MatrexNumerix.GP.KernelData do
     }
   end
 
+  def ard(dtype, x1 = %Matrex{}, x2 = %Matrex{}) do
+    %KernelData{
+      rdata: MatrexNumerix.Distance.diff_conv(dtype, x1, x2),
+      ktype: :isotropic,
+      dtype: dtype
+    }
+  end
+
 end
