@@ -23,7 +23,7 @@ defmodule MatrexNumerix.GP.Kernel do
 
     # Marginal log-likelihood
     # gp.mll = - (dot(y, gp.alpha) + logdet(gp.cK) + log2π * gp.nobs) / 2
-    %{ gpe | y: y, alpha: alpha, cK: [u: chol_upper, l: chol_lower] }
+    %{ gpe | y: y, alpha: alpha, cK: %{u: chol_upper, l: chol_lower} }
   end
 
   # def update_cK(x = %Matrex{}, kernel, logNoise, data = %KernelData{}) do
