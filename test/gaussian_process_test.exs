@@ -314,4 +314,43 @@ defmodule MatrexNumerix.GP do
     assert abs(mu |> Matrex.subtract(yy) |> Matrex.sum()) < 1.0e-2
 
   end
+
+  test "test gp predict lin", state do
+
+    x = state[:x]
+    y = state[:y]
+    xhat = state[:xhat]
+
+    logObsNoise = -1.2
+    mConst = %MatrexNumerix.GP.MeanConst{const: 1.56}
+    kern = %MatrexNumerix.GP.LinIso{scale: 0.652}
+
+    gpe = MatrexNumerix.GPE.calculate(x, y, mConst, kern, logObsNoise)
+
+    expected_predict = Matrex.new " 1.1632877344937216  1.0582876569604642  0.9532875794272089  0.8482875018939531  0.7432874243606942  0.6382873468274388  0.5332872692941826  0.428287191760925   0.32328711422767187 0.21828703669441252 0.11328695916115583 0.008286881627900922 -0.09671319590535665 -0.20171327343861334 -0.30671335097186914 -0.4117134285051276  -0.5167135060383843  -0.6217135835716374  -0.7267136611048959  -0.8317137386381526  -0.9367138161714128  -1.0417138937046642  -1.1467139712379173 "
+
+    xx = xhat |> Matrex.submatrix(1..1, 1..1)
+    yy = expected_predict[1] # |> Matrex.column(2) |> Matrex.transpose()
+
+    {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)
+
+    IO.inspect(mu, label: :mu_mat12)
+
+    assert mu[1] == 1.1632874011993408
+
+    xx = xhat #|> Matrex.column(1) |> Matrex.transpose()
+    yy = expected_predict #|> Matrex.column(2) |> Matrex.transpose()
+
+    {mu, sigma} = MatrexNumerix.GPE.predict_y(gpe, xx)
+
+    IO.inspect(expected_predict, label: :expected_predict)
+    IO.inspect(mu, label: :mu_12)
+    # for x <-  |> Enum.to_list() do IO.inspect(x) end
+    for {x,xd} <- Enum.zip(mu, Matrex.subtract(mu, expected_predict)) do IO.puts("#{x} #{xd}") end
+    # IO.inspect( Matrex.subtract(mu, expected_predict) , label: :diff)
+    # IO.puts("diffs:")
+
+    assert abs(mu |> Matrex.subtract(yy) |> Matrex.sum()) < 1.0e-4
+
+  end
 end
