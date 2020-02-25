@@ -43,7 +43,7 @@ defmodule MatrexNumerix.GP.Mat12Ard do
 
   def kern_dist(x1, x2), do: GP.KernelData.isotropic(:euclidian, x1, x2)
 
-  defstruct scale: Vector.zeros(1), sigma2: 0.0, priors: Vector.zeros(1)
+  defstruct scale: nil, sigma2: 0.0, priors: nil
 
   @type t :: %Mat12Ard{sigma2: float, scale: Matrex.t(), priors: Matrex.t()}
 
